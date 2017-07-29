@@ -19,9 +19,9 @@ public class Cliente {
 
             System.out.println("Cliente");
             Calculadora calculadora = (Calculadora) Naming.lookup("127.0.0.1/Calculadora" + id);
-            long resultado = calculadora.somar(10, 50);
+            //long resultado = calculadora.somar(10, 50);
 
-            System.out.println("A SOMA FOI: " + resultado);
+            //System.out.println("A SOMA FOI: " + resultado);
         } catch (Exception ex) {
             System.out.println("ERRO: " + ex.getMessage());
         }

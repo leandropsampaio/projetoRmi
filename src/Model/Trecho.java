@@ -10,16 +10,26 @@ import java.io.Serializable;
  */
 public class Trecho implements Serializable {
 
+    private int id;
     private String origem;
     private String destino;
     private int companhia;
     private int quantAssentos;
 
-    public Trecho(String origem, String destino, int companhia, int quantAssentos) {
+    public Trecho(int id, String origem, String destino, int companhia, int quantAssentos) {
+        this.id = id;
         this.origem = origem;
         this.destino = destino;
         this.companhia = companhia;
         this.quantAssentos = quantAssentos;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**

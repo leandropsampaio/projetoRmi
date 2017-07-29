@@ -10,7 +10,9 @@ import java.util.List;
  */
 public interface Calculadora extends Remote {
 
-    public long somar(long a, long b) throws RemoteException;
+    //public long somar(long a, long b) throws RemoteException;
     
     public List trechos(int id) throws RemoteException;
+    
+    public void comprar(String trecho) throws RemoteException;
 }

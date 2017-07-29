@@ -10,6 +10,7 @@ import Controller.CalculadoraImplementacao;
 import Model.Trecho;
 import Model.Trechos;
 import Network.Servidor;
+import java.awt.Toolkit;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -22,6 +23,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -41,6 +43,7 @@ public class Interface extends javax.swing.JFrame {
      */
     public Interface() {
         Servidor();
+        setIcon();
         initComponents();
     }
 
@@ -61,8 +64,10 @@ public class Interface extends javax.swing.JFrame {
         buttonReservar = new javax.swing.JButton();
         buttonRemover = new javax.swing.JButton();
         buttonComprar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Passagens Aéreas");
 
         buttonMostrarTrechos.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
         buttonMostrarTrechos.setText("Mostrar Trechos");
@@ -94,6 +99,17 @@ public class Interface extends javax.swing.JFrame {
 
         buttonComprar.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
         buttonComprar.setText("Comprar");
+        buttonComprar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonComprarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Trajan Pro", 1, 36)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(51, 204, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Passagens Aéreas");
+        jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 204, 255)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -101,40 +117,45 @@ public class Interface extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(buttonReservar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(buttonRemover, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(99, 99, 99)
                 .addComponent(buttonMostrarTrechos)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(buttonComprar)
-                .addGap(105, 105, 105))
+                .addGap(127, 127, 127))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(234, 234, 234))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPane1)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(161, 161, 161)
+                        .addGap(143, 143, 143)
                         .addComponent(buttonReservar)
-                        .addGap(75, 75, 75)
+                        .addGap(73, 73, 73)
                         .addComponent(buttonRemover)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonMostrarTrechos)
                     .addComponent(buttonComprar))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -156,6 +177,19 @@ public class Interface extends javax.swing.JFrame {
 
         listaReservas.setModel(dlm2);
     }//GEN-LAST:event_buttonRemoverActionPerformed
+
+    private void buttonComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonComprarActionPerformed
+        comprar(dlm2.toArray());
+
+        dlm.removeAllElements();
+        dlm2.removeAllElements();
+        listaTrechos.setModel(dlm);
+        listaReservas.setModel(dlm2);
+
+        JOptionPane.showMessageDialog(rootPane, "Sua compra foi realizada com sucesso!");
+        
+        mostrarTrechos();
+    }//GEN-LAST:event_buttonComprarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -198,6 +232,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JButton buttonMostrarTrechos;
     private javax.swing.JButton buttonRemover;
     private javax.swing.JButton buttonReservar;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList<String> listaReservas;
@@ -213,11 +248,11 @@ public class Interface extends javax.swing.JFrame {
 
             LocateRegistry.createRegistry(porta);
             cal = new CalculadoraImplementacao();
-            Naming.rebind("127.0.0.1/Calculadora" + id, (Remote) cal);
+            Naming.rebind("127.0.0.1/PassagensAreas" + id, (Remote) cal);
 
-            leitura.nextLine();
-            leitura.nextLine();
-            fazerConexões();
+            //leitura.nextLine();
+            //leitura.nextLine();
+            //fazerConexões();
 
             System.out.println("Servidor Remoto Iniciado...");
         } catch (RemoteException | MalformedURLException ex) {
@@ -233,7 +268,7 @@ public class Interface extends javax.swing.JFrame {
         try {
             for (int i = 1; i <= 3; i++) {
                 if (i != id) {
-                    calculadora = (Calculadora) Naming.lookup("127.0.0.1/Calculadora" + i);
+                    calculadora = (Calculadora) Naming.lookup("127.0.0.1/PassagensAreas" + i);
                     /*
                     List trechos = calculadora.trechos(i);
 
@@ -255,37 +290,58 @@ public class Interface extends javax.swing.JFrame {
 
     public void mostrarTrechos() {
         List trechos;
+        int i = 0;
         try {
-            for (int i = 1; i <= 3; i++) {
+            for (i = 1; i <= 3; i++) {
                 if (i == id) {
-                    Iterator it = cal.trechos(id).iterator();
+                    Iterator it = cal.trechos(id).iterator(); //cal
 
                     while (it.hasNext()) {
+                        //dlm.addElement("AAA");
                         Trecho trecho = (Trecho) it.next();
-                        dlm.addElement("Origem: " + trecho.getOrigem() + " | " + "Destino: " + trecho.getDestino() + "  -  " + "Assentos: " + trecho.getQuantAssentos());
+                        dlm.addElement(trecho.getId() + "- Origem: " + trecho.getOrigem() + " | " + "Destino: " + trecho.getDestino() + "  -  " + "Assentos: " + trecho.getQuantAssentos());
                     }
-
+                    
                 } else if (i != id) {
-                    calculadora = (Calculadora) Naming.lookup("127.0.0.1/Calculadora" + i);
+                    calculadora = (Calculadora) Naming.lookup("127.0.0.1/PassagensAreas" + i);
                     trechos = calculadora.trechos(i);
 
                     Iterator it = trechos.iterator();
                     while (it.hasNext()) {
+                        //dlm.addElement("BBB");
                         Trecho trecho = (Trecho) it.next();
-                        dlm.addElement("Origem: " + trecho.getOrigem() + " | " + "Destino: " + trecho.getDestino() + " -  " + "Assentos: " + trecho.getQuantAssentos());
+                        dlm.addElement(trecho.getId() + "- Origem: " + trecho.getOrigem() + " | " + "Destino: " + trecho.getDestino() + "  |  " + "Assentos: " + trecho.getQuantAssentos());
                     }
                 }
             }
         } catch (RemoteException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NotBoundException ex) {
-            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("Servidor: | "+i+" | não iniciado! Execute o servidor...");
         } catch (MalformedURLException ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         listaTrechos.setModel(dlm);
         //listaTrechos.getSelectedValue(); //Pega o trecho escolhido na lista
+    }
+
+    private void comprar(Object[] trechos) {
+        try {
+            for (int i = 1; i <= 3; i++) {
+                calculadora = (Calculadora) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+
+                for (Object objetoTrecho : trechos) {
+                    calculadora.comprar(objetoTrecho.toString());
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void setIcon() {
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/plane.png")));
     }
 
 }
