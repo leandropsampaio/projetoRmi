@@ -45,6 +45,7 @@ public class Interface extends javax.swing.JFrame {
         Servidor();
         setIcon();
         initComponents();
+        buttonConfirmar.setEnabled(false);
     }
 
     /**
@@ -61,10 +62,11 @@ public class Interface extends javax.swing.JFrame {
         listaTrechos = new javax.swing.JList<>();
         jScrollPane2 = new javax.swing.JScrollPane();
         listaReservas = new javax.swing.JList<>();
-        buttonReservar = new javax.swing.JButton();
+        buttonEscolher = new javax.swing.JButton();
         buttonRemover = new javax.swing.JButton();
-        buttonComprar = new javax.swing.JButton();
+        buttonConfirmar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        buttonReservar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Passagens Aéreas");
@@ -81,11 +83,11 @@ public class Interface extends javax.swing.JFrame {
 
         jScrollPane2.setViewportView(listaReservas);
 
-        buttonReservar.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
-        buttonReservar.setText("Reservar => ");
-        buttonReservar.addActionListener(new java.awt.event.ActionListener() {
+        buttonEscolher.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
+        buttonEscolher.setText("Escolher => ");
+        buttonEscolher.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonReservarActionPerformed(evt);
+                buttonEscolherActionPerformed(evt);
             }
         });
 
@@ -97,11 +99,13 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        buttonComprar.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
-        buttonComprar.setText("Comprar");
-        buttonComprar.addActionListener(new java.awt.event.ActionListener() {
+        buttonConfirmar.setBackground(new java.awt.Color(0, 204, 0));
+        buttonConfirmar.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
+        buttonConfirmar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/ok-mark.png"))); // NOI18N
+        buttonConfirmar.setText("Confirmar");
+        buttonConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonComprarActionPerformed(evt);
+                buttonConfirmarActionPerformed(evt);
             }
         });
 
@@ -111,50 +115,57 @@ public class Interface extends javax.swing.JFrame {
         jLabel1.setText("Passagens Aéreas");
         jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 204, 255)));
 
+        buttonReservar.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
+        buttonReservar.setText("Reservar");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(buttonReservar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonEscolher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(buttonRemover, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(99, 99, 99)
                 .addComponent(buttonMostrarTrechos)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(buttonComprar)
-                .addGap(127, 127, 127))
+                .addComponent(buttonReservar)
+                .addGap(61, 61, 61)
+                .addComponent(buttonConfirmar)
+                .addGap(29, 29, 29))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(234, 234, 234))
+                .addGap(248, 248, 248))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jScrollPane1)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(143, 143, 143)
-                        .addComponent(buttonReservar)
+                        .addComponent(buttonEscolher)
                         .addGap(73, 73, 73)
                         .addComponent(buttonRemover)))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(buttonMostrarTrechos)
-                    .addComponent(buttonComprar))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(buttonConfirmar)
+                        .addComponent(buttonReservar))
+                    .addComponent(buttonMostrarTrechos))
                 .addContainerGap())
         );
 
@@ -166,11 +177,11 @@ public class Interface extends javax.swing.JFrame {
 
     }//GEN-LAST:event_buttonMostrarTrechosActionPerformed
 
-    private void buttonReservarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonReservarActionPerformed
+    private void buttonEscolherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEscolherActionPerformed
         dlm2.addElement(listaTrechos.getSelectedValue()); //Pega o trecho escolhido na lista e adiciona na outra lista
 
         listaReservas.setModel(dlm2);
-    }//GEN-LAST:event_buttonReservarActionPerformed
+    }//GEN-LAST:event_buttonEscolherActionPerformed
 
     private void buttonRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRemoverActionPerformed
         dlm2.removeElement(listaReservas.getSelectedValue());
@@ -178,7 +189,7 @@ public class Interface extends javax.swing.JFrame {
         listaReservas.setModel(dlm2);
     }//GEN-LAST:event_buttonRemoverActionPerformed
 
-    private void buttonComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonComprarActionPerformed
+    private void buttonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmarActionPerformed
         comprar(dlm2.toArray());
 
         dlm.removeAllElements();
@@ -187,9 +198,9 @@ public class Interface extends javax.swing.JFrame {
         listaReservas.setModel(dlm2);
 
         JOptionPane.showMessageDialog(rootPane, "Sua compra foi realizada com sucesso!");
-        
+
         mostrarTrechos();
-    }//GEN-LAST:event_buttonComprarActionPerformed
+    }//GEN-LAST:event_buttonConfirmarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -202,7 +213,7 @@ public class Interface extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -228,7 +239,8 @@ public class Interface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonComprar;
+    private javax.swing.JButton buttonConfirmar;
+    private javax.swing.JButton buttonEscolher;
     private javax.swing.JButton buttonMostrarTrechos;
     private javax.swing.JButton buttonRemover;
     private javax.swing.JButton buttonReservar;
@@ -253,7 +265,6 @@ public class Interface extends javax.swing.JFrame {
             //leitura.nextLine();
             //leitura.nextLine();
             //fazerConexões();
-
             System.out.println("Servidor Remoto Iniciado...");
         } catch (RemoteException | MalformedURLException ex) {
             System.err.println("ERRO: " + ex.getMessage());
@@ -301,7 +312,7 @@ public class Interface extends javax.swing.JFrame {
                         Trecho trecho = (Trecho) it.next();
                         dlm.addElement(trecho.getId() + "- Origem: " + trecho.getOrigem() + " | " + "Destino: " + trecho.getDestino() + "  -  " + "Assentos: " + trecho.getQuantAssentos());
                     }
-                    
+
                 } else if (i != id) {
                     calculadora = (Calculadora) Naming.lookup("127.0.0.1/PassagensAreas" + i);
                     trechos = calculadora.trechos(i);
@@ -317,7 +328,7 @@ public class Interface extends javax.swing.JFrame {
         } catch (RemoteException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NotBoundException ex) {
-            System.err.println("Servidor: | "+i+" | não iniciado! Execute o servidor...");
+            System.err.println("Servidor: | " + i + " | não iniciado! Execute o servidor...");
         } catch (MalformedURLException ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -339,7 +350,7 @@ public class Interface extends javax.swing.JFrame {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void setIcon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/plane.png")));
     }
