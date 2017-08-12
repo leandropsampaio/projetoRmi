@@ -12,12 +12,12 @@ import java.util.List;
  *
  * @author Leandro Pereira Sampaio
  */
-public class CalculadoraImplementacao extends UnicastRemoteObject implements Calculadora {
+public class CompanhiaImplementacao extends UnicastRemoteObject implements Companhia {
 
     private List lista;
     private List listaTrechos;
 
-    public CalculadoraImplementacao() throws RemoteException {
+    public CompanhiaImplementacao() throws RemoteException {
         super();
         listaTrechos = Trechos.retornarListaTrechos();
         lista = new ArrayList<>();

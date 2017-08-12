@@ -5,8 +5,7 @@
  */
 package View;
 
-import Controller.Calculadora;
-import Controller.CalculadoraImplementacao;
+import Controller.CompanhiaImplementacao;
 import Model.Trecho;
 import Model.Trechos;
 import Network.Servidor;
@@ -24,15 +23,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import Controller.Companhia;
 
 /**
  *
  * @author Leandro Pereira Sampaio
  */
-public class Interface extends javax.swing.JFrame {
+public class ClienteRMI extends javax.swing.JFrame {
 
-    private Calculadora cal;
-    private Calculadora calculadora;
+    private Companhia cal;
+    private Companhia calculadora;
     private int id;
     private Scanner leitura = new Scanner(System.in);
     private DefaultListModel dlm = new DefaultListModel();
@@ -41,8 +41,8 @@ public class Interface extends javax.swing.JFrame {
     /**
      * Creates new form Relogio
      */
-    public Interface() {
-        Servidor();
+    public ClienteRMI() {
+        //Servidor();
         setIcon();
         initComponents();
         buttonConfirmar.setEnabled(false);
@@ -219,21 +219,27 @@ public class Interface extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteRMI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteRMI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteRMI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteRMI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Interface().setVisible(true);
+                new ClienteRMI().setVisible(true);
             }
         });
     }
@@ -251,54 +257,6 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JList<String> listaTrechos;
     // End of variables declaration//GEN-END:variables
 
-    public void Servidor() {
-        try {
-            System.out.println("Digite o id da Companhia Aérea:");
-            id = leitura.nextInt();
-            System.out.println("Digite a porta do servidor:");
-            int porta = leitura.nextInt();
-
-            LocateRegistry.createRegistry(porta);
-            cal = new CalculadoraImplementacao();
-            Naming.rebind("127.0.0.1/PassagensAreas" + id, (Remote) cal);
-
-            //leitura.nextLine();
-            //leitura.nextLine();
-            //fazerConexões();
-            System.out.println("Servidor Remoto Iniciado...");
-        } catch (RemoteException | MalformedURLException ex) {
-            System.err.println("ERRO: " + ex.getMessage());
-        }
-    }
-
-    /**
-     * Fazer conexões com outras companhias aéreas
-     *
-     */
-    public void fazerConexões() {
-        try {
-            for (int i = 1; i <= 3; i++) {
-                if (i != id) {
-                    calculadora = (Calculadora) Naming.lookup("127.0.0.1/PassagensAreas" + i);
-                    /*
-                    List trechos = calculadora.trechos(i);
-
-                    Iterator it = trechos.iterator();
-                    while(it.hasNext()){
-                        Trecho trecho = (Trecho) it.next();
-                        System.out.println("________________________________________________");
-                        System.out.println("Origem: "+trecho.getOrigem());
-                        System.out.println("Destino: "+trecho.getDestino());
-                        System.out.println("________________________________________________");
-                    }
-                     */
-                }
-            }
-        } catch (Exception ex) {
-            System.err.println("ERRO: " + ex.getMessage());
-        }
-    }
-
     public void mostrarTrechos() {
         List trechos;
         int i = 0;
@@ -314,9 +272,9 @@ public class Interface extends javax.swing.JFrame {
                     }
 
                 } else if (i != id) {
-                    calculadora = (Calculadora) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                    calculadora = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
                     trechos = calculadora.trechos(i);
-
+                    
                     Iterator it = trechos.iterator();
                     while (it.hasNext()) {
                         //dlm.addElement("BBB");
@@ -330,7 +288,7 @@ public class Interface extends javax.swing.JFrame {
         } catch (NotBoundException ex) {
             System.err.println("Servidor: | " + i + " | não iniciado! Execute o servidor...");
         } catch (MalformedURLException ex) {
-            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         listaTrechos.setModel(dlm);
@@ -340,19 +298,69 @@ public class Interface extends javax.swing.JFrame {
     private void comprar(Object[] trechos) {
         try {
             for (int i = 1; i <= 3; i++) {
-                calculadora = (Calculadora) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                calculadora = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
 
                 for (Object objetoTrecho : trechos) {
                     calculadora.comprar(objetoTrecho.toString());
                 }
             }
         } catch (Exception ex) {
-            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     private void setIcon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/plane.png")));
     }
+    
+     /*
+    public void Servidor() {
+        try {
+            System.out.println("Digite o id da Companhia Aérea:");
+            id = leitura.nextInt();
+            System.out.println("Digite a porta do servidor:");
+            int porta = leitura.nextInt();
+
+            LocateRegistry.createRegistry(porta);
+            cal = new CompanhiaImplementacao();
+            Naming.rebind("127.0.0.1/PassagensAreas" + id, (Remote) cal);
+
+            //leitura.nextLine();
+            //leitura.nextLine();
+            //fazerConexões();
+            System.out.println("Servidor Remoto Iniciado...");
+        } catch (RemoteException | MalformedURLException ex) {
+            System.err.println("ERRO: " + ex.getMessage());
+        }
+    }*/
+
+    /**
+     * Fazer conexões com outras companhias aéreas
+     *
+     */
+    /*
+    public void fazerConexões() {
+        try {
+            for (int i = 1; i <= 3; i++) {
+                if (i != id) {
+                    calculadora = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                    ***
+                    List trechos = calculadora.trechos(i);
+
+                    Iterator it = trechos.iterator();
+                    while(it.hasNext()){
+                        Trecho trecho = (Trecho) it.next();
+                        System.out.println("________________________________________________");
+                        System.out.println("Origem: "+trecho.getOrigem());
+                        System.out.println("Destino: "+trecho.getDestino());
+                        System.out.println("________________________________________________");
+                    }
+                    ***
+                }
+            }
+        } catch (Exception ex) {
+            System.err.println("ERRO: " + ex.getMessage());
+        }
+    }*/
 
 }

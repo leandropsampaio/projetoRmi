@@ -1,7 +1,6 @@
 package Network;
 
-import Controller.Calculadora;
-import Controller.CalculadoraImplementacao;
+import Controller.CompanhiaImplementacao;
 import Model.Trecho;
 import Model.Trechos;
 import java.net.MalformedURLException;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import Controller.Companhia;
 
 /**
  *
@@ -21,8 +21,8 @@ import java.util.logging.Logger;
  */
 public class Servidor {
 
-    private Calculadora cal;
-    private Calculadora calculadora;
+    private Companhia cal;
+    private Companhia calculadora;
     private int id;
     private Scanner leitura = new Scanner(System.in);
 
@@ -39,7 +39,7 @@ public class Servidor {
             int porta = leitura.nextInt();
 
             LocateRegistry.createRegistry(porta);
-            cal = new CalculadoraImplementacao();
+            cal = new CompanhiaImplementacao();
             Naming.rebind("127.0.0.1/Calculadora" + id, (Remote) cal);
 
             leitura.nextLine();
@@ -61,7 +61,7 @@ public class Servidor {
         try {
             for (int i = 1; i <= 3; i++) {
                 if (i != id) {
-                    calculadora = (Calculadora) Naming.lookup("127.0.0.1/Calculadora" + i);
+                    calculadora = (Companhia) Naming.lookup("127.0.0.1/Calculadora" + i);
                     /*
                     List trechos = calculadora.trechos(i);
 

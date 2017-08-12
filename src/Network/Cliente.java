@@ -1,8 +1,8 @@
 package Network;
 
-import Controller.Calculadora;
 import java.rmi.Naming;
 import java.util.Scanner;
+import Controller.Companhia;
 
 /**
  *
@@ -18,7 +18,7 @@ public class Cliente {
             int id = leitura.nextInt();
 
             System.out.println("Cliente");
-            Calculadora calculadora = (Calculadora) Naming.lookup("127.0.0.1/Calculadora" + id);
+            Companhia calculadora = (Companhia) Naming.lookup("127.0.0.1/Calculadora" + id);
             //long resultado = calculadora.somar(10, 50);
 
             //System.out.println("A SOMA FOI: " + resultado);

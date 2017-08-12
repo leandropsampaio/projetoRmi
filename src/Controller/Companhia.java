@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author Leandro Pereira Sampaio
  */
-public interface Calculadora extends Remote {
+public interface Companhia extends Remote {
 
     //public long somar(long a, long b) throws RemoteException;
     
