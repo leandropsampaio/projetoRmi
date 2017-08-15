@@ -39,7 +39,7 @@ public class Servidor {
             int porta = leitura.nextInt();
 
             LocateRegistry.createRegistry(porta);
-            cal = new CompanhiaImplementacao();
+            cal = new CompanhiaImplementacao(id);
             Naming.rebind("127.0.0.1/Calculadora" + id, (Remote) cal);
 
             leitura.nextLine();
@@ -47,7 +47,7 @@ public class Servidor {
             fazerConexões();
 
             System.out.println("Servidor Remoto Iniciado...");
-            mostrarTrechos();
+            //mostrarTrechos();
         } catch (RemoteException | MalformedURLException ex) {
             System.err.println("ERRO: " + ex.getMessage());
         }
@@ -81,6 +81,7 @@ public class Servidor {
         }
     }
 
+    /*
     public void mostrarTrechos() {
         List trechos;
         try {
@@ -112,5 +113,5 @@ public class Servidor {
         } catch (RemoteException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
 }

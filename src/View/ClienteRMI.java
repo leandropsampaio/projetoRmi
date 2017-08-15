@@ -198,8 +198,6 @@ public class ClienteRMI extends javax.swing.JFrame {
         listaTrechos.setModel(dlm);
         listaReservas.setModel(dlm2);
 
-        JOptionPane.showMessageDialog(rootPane, "Sua compra foi realizada com sucesso!");
-
         mostrarTrechos();
     }//GEN-LAST:event_buttonConfirmarActionPerformed
 
@@ -260,7 +258,6 @@ public class ClienteRMI extends javax.swing.JFrame {
 
     public void mostrarTrechos() {
         List trechos;
-
         try {
             companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
             trechos = companhia.trechos();
@@ -284,12 +281,18 @@ public class ClienteRMI extends javax.swing.JFrame {
     }
 
     private void comprar(Object[] trechos) {
-
+        boolean compraConcedida = false;
         try {
             companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
 
             for (Object objetoTrecho : trechos) {
-                companhia.comprar(objetoTrecho.toString());
+                compraConcedida = companhia.comprar(objetoTrecho.toString());
+            }
+
+            if (compraConcedida == true) {
+                JOptionPane.showMessageDialog(rootPane, "Sua compra foi realizada com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Sua compra não pode ser realizada!");
             }
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
