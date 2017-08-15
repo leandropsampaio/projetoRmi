@@ -32,7 +32,7 @@ import Controller.Companhia;
 public class ClienteRMI extends javax.swing.JFrame {
 
     private Companhia cal;
-    private Companhia calculadora;
+    private CompanhiaImplementacao companhia;
     private int id;
     private Scanner leitura = new Scanner(System.in);
     private DefaultListModel dlm = new DefaultListModel();
@@ -272,8 +272,8 @@ public class ClienteRMI extends javax.swing.JFrame {
                     }
 
                 } else if (i != id) {
-                    calculadora = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
-                    trechos = calculadora.trechos(i);
+                    companhia = (CompanhiaImplementacao) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                    trechos = companhia.trechos(i);
                     
                     Iterator it = trechos.iterator();
                     while (it.hasNext()) {
@@ -296,14 +296,34 @@ public class ClienteRMI extends javax.swing.JFrame {
     }
 
     private void comprar(Object[] trechos) {
+        int ids[] = new int[trechos.length];
+        boolean acessoLocal = false;
+        boolean acessoRemoto = false;
+        for(int i = 0; i < trechos.length; i++){
+            Trecho trecho = (Trecho) trechos[i];
+            ids[i] = trecho.getId();
+        }
+        
         try {
+            companhia = (CompanhiaImplementacao) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+            //Pede autorizacao para usar a reg crit
+            while(!acessoLocal && !acessoRemoto){
+                acessoLocal = companhia.pedirAcessoInter(ids);
+                acessoRemoto = companhia.pedirAcesso(ids, companhia.getLogiClock(), companhia.getServerId());
+            }
+            
             for (int i = 1; i <= 3; i++) {
-                calculadora = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                companhia = (CompanhiaImplementacao) Naming.lookup("127.0.0.1/PassagensAreas" + i);
 
                 for (Object objetoTrecho : trechos) {
-                    calculadora.comprar(objetoTrecho.toString());
+                    companhia.comprar(objetoTrecho.toString());
                 }
             }
+            
+            //Liberar acesso à reg crit
+            companhia = (CompanhiaImplementacao) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+            companhia.liberarAcesso(ids);
+            
         } catch (Exception ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }

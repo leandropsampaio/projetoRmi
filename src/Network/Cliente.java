@@ -18,7 +18,7 @@ public class Cliente {
             int id = leitura.nextInt();
 
             System.out.println("Cliente");
-            Companhia calculadora = (Companhia) Naming.lookup("127.0.0.1/Calculadora" + id);
+            Companhia companhia = (Companhia) Naming.lookup("127.0.0.1/Calculadora" + id);
             //long resultado = calculadora.somar(10, 50);
 
             //System.out.println("A SOMA FOI: " + resultado);
