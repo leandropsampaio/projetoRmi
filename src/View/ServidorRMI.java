@@ -32,7 +32,7 @@ public class ServidorRMI {
             int porta = leitura.nextInt();
 
             LocateRegistry.createRegistry(porta);
-            companhia = new CompanhiaImplementacao();
+            companhia = new CompanhiaImplementacao(id);
             Naming.rebind("127.0.0.1/PassagensAreas" + id, (Remote) companhia);
 
             //leitura.nextLine();
@@ -43,5 +43,4 @@ public class ServidorRMI {
             System.err.println("ERRO: " + ex.getMessage());
         }
     }
-    
 }

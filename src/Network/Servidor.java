@@ -39,7 +39,7 @@ public class Servidor {
             int porta = leitura.nextInt();
 
             LocateRegistry.createRegistry(porta);
-            cal = new CompanhiaImplementacao();
+            cal = new CompanhiaImplementacao(id);
             Naming.rebind("127.0.0.1/Calculadora" + id, (Remote) cal);
 
             leitura.nextLine();
