@@ -31,8 +31,8 @@ import Controller.Companhia;
  */
 public class ClienteRMI extends javax.swing.JFrame {
 
-    private Companhia cal;
-    private Companhia calculadora;
+    private Companhia com;
+    private Companhia companhia;
     private int id;
     private Scanner leitura = new Scanner(System.in);
     private DefaultListModel dlm = new DefaultListModel();
@@ -43,9 +43,10 @@ public class ClienteRMI extends javax.swing.JFrame {
      */
     public ClienteRMI() {
         //Servidor();
+        id = Integer.valueOf(JOptionPane.showInputDialog("Digite o id da companhia que você deseja se conectar:"));
         setIcon();
         initComponents();
-        buttonConfirmar.setEnabled(false);
+        //buttonConfirmar.setEnabled(false);
     }
 
     /**
@@ -259,61 +260,48 @@ public class ClienteRMI extends javax.swing.JFrame {
 
     public void mostrarTrechos() {
         List trechos;
-        int i = 0;
+
         try {
-            for (i = 1; i <= 3; i++) {
-                if (i == id) {
-                    Iterator it = cal.trechos(id).iterator(); //cal
+            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+            trechos = companhia.trechos();
 
-                    while (it.hasNext()) {
-                        //dlm.addElement("AAA");
-                        Trecho trecho = (Trecho) it.next();
-                        dlm.addElement(trecho.getId() + "- Origem: " + trecho.getOrigem() + " | " + "Destino: " + trecho.getDestino() + "  -  " + "Assentos: " + trecho.getQuantAssentos());
-                    }
-
-                } else if (i != id) {
-                    calculadora = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
-                    trechos = calculadora.trechos(i);
-                    
-                    Iterator it = trechos.iterator();
-                    while (it.hasNext()) {
-                        //dlm.addElement("BBB");
-                        Trecho trecho = (Trecho) it.next();
-                        dlm.addElement(trecho.getId() + "- Origem: " + trecho.getOrigem() + " | " + "Destino: " + trecho.getDestino() + "  |  " + "Assentos: " + trecho.getQuantAssentos());
-                    }
-                }
+            Iterator it = trechos.iterator();
+            while (it.hasNext()) {
+                //dlm.addElement("BBB");
+                Trecho trecho = (Trecho) it.next();
+                dlm.addElement(trecho.getId() + "- Origem: " + trecho.getOrigem() + " | Destino: " + trecho.getDestino()
+                        + "  |  Assentos: " + trecho.getQuantAssentos() + " | Companhia -" + trecho.getCompanhia());
             }
         } catch (RemoteException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NotBoundException ex) {
-            System.err.println("Servidor: | " + i + " | não iniciado! Execute o servidor...");
+            System.err.println("Servidor: | " + id + " | não iniciado! Execute o servidor...");
         } catch (MalformedURLException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         listaTrechos.setModel(dlm);
-        //listaTrechos.getSelectedValue(); //Pega o trecho escolhido na lista
     }
 
     private void comprar(Object[] trechos) {
-        try {
-            for (int i = 1; i <= 3; i++) {
-                calculadora = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
 
-                for (Object objetoTrecho : trechos) {
-                    calculadora.comprar(objetoTrecho.toString());
-                }
+        try {
+            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+
+            for (Object objetoTrecho : trechos) {
+                companhia.comprar(objetoTrecho.toString());
             }
-        } catch (Exception ex) {
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     private void setIcon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/plane.png")));
     }
-    
-     /*
+
+    /*
     public void Servidor() {
         try {
             System.out.println("Digite o id da Companhia Aérea:");
@@ -333,7 +321,6 @@ public class ClienteRMI extends javax.swing.JFrame {
             System.err.println("ERRO: " + ex.getMessage());
         }
     }*/
-
     /**
      * Fazer conexões com outras companhias aéreas
      *
@@ -362,5 +349,4 @@ public class ClienteRMI extends javax.swing.JFrame {
             System.err.println("ERRO: " + ex.getMessage());
         }
     }*/
-
 }
