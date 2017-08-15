@@ -287,6 +287,9 @@ public class ClienteRMI extends javax.swing.JFrame {
 
             for (Object objetoTrecho : trechos) {
                 compraConcedida = companhia.comprar(objetoTrecho.toString());
+                if(compraConcedida == false){
+                    break;
+                }
             }
 
             if (compraConcedida == true) {

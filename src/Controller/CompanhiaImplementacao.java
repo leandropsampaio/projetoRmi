@@ -106,6 +106,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     @Override
     public boolean comprar(String trecho) throws RemoteException {
 
+        List listaAux = new ArrayList<>();
         boolean entrou = false;
         Iterator it = listaTrechos.iterator();
         String[] trechoSplit = trecho.split("-");
@@ -117,17 +118,23 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
                 System.out.println("ID:" + trechoSplit[0] + " | ID:" + trecho2.getId());
                 if (trecho2.getId() == Integer.valueOf(trechoSplit[0])) {
                     entrou = true;
-                    System.out.println("Comprou esse trecho!");
-                    trecho2.setQuantAssentos(trecho2.getQuantAssentos() - 1);
-                    if (trecho2.getQuantAssentos() == 0) {
-                        listaTrechos.remove(trecho2);
-                    }
-                    return true;
+                    listaAux.add(trecho2);
                 }
             }
             if (entrou == false) {
                 System.out.println("ERROOOO ACABOU AS VAGAS !!!!!!!!!!!!");
                 return false;
+            } else {
+                it = listaAux.iterator();
+                while (it.hasNext()) {
+                    Trecho trecho2 = (Trecho) it.next();
+                    System.out.println("Comprou esse trecho!");
+                    trecho2.setQuantAssentos(trecho2.getQuantAssentos() - 1);
+                    if (trecho2.getQuantAssentos() == 0) {
+                        listaTrechos.remove(trecho2);
+                    }
+                }
+                return true;
             }
         } else {
             try {
@@ -155,6 +162,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
 
     @Override
     public boolean removerTrecho(int idTrecho) throws RemoteException {
+        List listaAux = new ArrayList<>();
         boolean entrou = false;
         Iterator it = listaTrechos.iterator();
 
@@ -162,18 +170,24 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
             Trecho trecho2 = (Trecho) it.next();
             if (trecho2.getId() == idTrecho) {
                 entrou = true;
-                trecho2.setQuantAssentos(trecho2.getQuantAssentos() - 1);
-                if (trecho2.getQuantAssentos() == 0) {
-                    listaTrechos.remove(trecho2);
-                    return true;
-                }
+                listaAux.add(trecho2);
             }
         }
         if (entrou == false) {
             System.out.println("ERROOOO ACABOU AS VAGAS !!!!!!!!!!!!");
             return false;
+        } else {
+            it = listaAux.iterator();
+            while (it.hasNext()) {
+                Trecho trecho2 = (Trecho) it.next();
+                System.out.println("Comprou esse trecho!");
+                trecho2.setQuantAssentos(trecho2.getQuantAssentos() - 1);
+                if (trecho2.getQuantAssentos() == 0) {
+                    listaTrechos.remove(trecho2);
+                }
+            }
+            return true;
         }
-        return false;
     }
 
     @Override
