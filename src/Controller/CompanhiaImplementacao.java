@@ -297,6 +297,8 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
         }
         return true;
     }
+    
+    
 
     @Override
     public void liberarAcesso(int[] ids) throws RemoteException {
