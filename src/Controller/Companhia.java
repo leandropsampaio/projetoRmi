@@ -15,7 +15,7 @@ public interface Companhia extends Remote {
     
     public List trechos() throws RemoteException;
     
-    public void comprar(String trecho) throws RemoteException;
+    public boolean comprar(String trecho) throws RemoteException;
     
     public boolean autorizarAcesso(int id, int myLogiClock, int myServerId) throws RemoteException;
     
@@ -27,5 +27,5 @@ public interface Companhia extends Remote {
     
     public void liberarAcesso(int ids[]) throws RemoteException;
     
-    public void removerTrecho(int trecho) throws RemoteException;
+    public boolean removerTrecho(int trecho) throws RemoteException;
 }
