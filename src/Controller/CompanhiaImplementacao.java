@@ -244,6 +244,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
         for (int i = 0; i < ids.length; i++) {
             if (autorizarAcesso(ids[i], myLogiClock, myServerId) == true) {
                 getTemRegCrit()[ids[i]] = true;
+                logiClock++;
             }
         }
         return true;
@@ -279,7 +280,9 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
         while(!regCritInterna || !regCritRemota){
            try {
                regCritInterna = pedirAcessoInter(ids);
+
                regCritRemota = pedirAcesso(ids, logiClock, serverId);
+
            } catch (RemoteException ex) {
                Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
            }
@@ -318,12 +321,17 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
                 }
             }
         }
+        
         System.out.println("Verificado acesso remoto");
         return true;
     }
     
     
-
+    /**
+     * Sai da região crítica
+     * @param ids
+     * @throws RemoteException 
+     */
     @Override
     public synchronized void liberarAcesso(int[] ids) throws RemoteException {
         for (int i = 0; i < ids.length; i++) {
@@ -363,6 +371,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     /**
      * @return the querRegCrit
      */
+    @Override
     public int[] getQuerRegCrit() {
         return querRegCrit;
     }
@@ -370,6 +379,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     /**
      * @return the temRegCrit
      */
+    @Override
     public boolean[] getTemRegCrit() {
         return temRegCrit;
     }

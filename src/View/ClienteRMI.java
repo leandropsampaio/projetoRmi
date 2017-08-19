@@ -326,6 +326,8 @@ public class ClienteRMI extends javax.swing.JFrame {
             } else {
                 JOptionPane.showMessageDialog(rootPane, "Sua compra não pode ser realizada!");
             }
+            
+            companhia.liberarAcesso(ids);
         } catch (RemoteException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
