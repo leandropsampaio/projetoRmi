@@ -5,17 +5,13 @@
  */
 package View;
 
-import Controller.CompanhiaImplementacao;
 import Model.Trecho;
-import Model.Trechos;
 import Network.Servidor;
 import java.awt.Toolkit;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -287,7 +283,7 @@ public class ClienteRMI extends javax.swing.JFrame {
 
             for (Object objetoTrecho : trechos) {
                 compraConcedida = companhia.comprar(objetoTrecho.toString());
-                if(compraConcedida == false){
+                if (compraConcedida == false) {
                     break;
                 }
             }
