@@ -19,10 +19,16 @@ public interface Companhia extends Remote {
     public boolean pedirAcesso(int[] ids, int myLogiClock, int myServerId) throws RemoteException;
 
     public boolean pedirAcessoInter(int ids[]) throws RemoteException;
+    
+    public boolean autorizarTotals(int[] ids) throws RemoteException;
 
     public List trechosDoServidor() throws RemoteException;
 
     public void liberarAcesso(int ids[]) throws RemoteException;
 
     public boolean removerTrecho(int trecho) throws RemoteException;
+
+    public boolean[] getTemRegCrit() throws RemoteException;
+
+    public int[] getQuerRegCrit() throws RemoteException;
 }

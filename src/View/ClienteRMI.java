@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import Controller.Companhia;
+import Controller.CompanhiaImplementacao;
 
 /**
  *
@@ -29,6 +30,7 @@ public class ClienteRMI extends javax.swing.JFrame {
 
     private Companhia com;
     private Companhia companhia;
+    private CompanhiaImplementacao companhia2;
     private int id;
     private Scanner leitura = new Scanner(System.in);
     private DefaultListModel dlm = new DefaultListModel();
@@ -277,10 +279,38 @@ public class ClienteRMI extends javax.swing.JFrame {
     }
 
     private void comprar(Object[] trechos) {
+        int ids[] = new int[trechos.length];
+        Trecho trecho = null;
+        Object objetoTrecho2 = null;
+        boolean regCrit = false;
         boolean compraConcedida = false;
         try {
-            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
-
+            //companhia2 = (CompanhiaImplementacao) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+            
+            //Transforma trechos em vetor de ids
+            for (int i = 0; i<trechos.length; i++) {
+                objetoTrecho2 = trechos[i];
+                String protocolo[] = objetoTrecho2.toString().split("-");
+                ids[i] = Integer.parseInt(protocolo[0]);
+                System.out.println(ids[i]+"////"+trechos[i]);
+            }
+            //Pede autorização para entrar na região critica
+            while(!regCrit){
+                regCrit = companhia.autorizarTotals(ids);
+            }
+            //
+            
+//            while(!regCritInterna || !regCritRemota){
+//                companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+//                companhia2 = (CompanhiaImplementacao) companhia2;
+//                regCritInterna = companhia2.pedirAcessoInter(ids);
+//                for(int i = 1; i <=3; i++){
+//                    if(i != id){
+//                        companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+//                        regCritRemota = companhia2.pedirAcesso(ids, companhia2.getLogiClock(), companhia2.getServerId());
+//                    }
+//                }
+//            }
             for (Object objetoTrecho : trechos) {
                 compraConcedida = companhia.comprar(objetoTrecho.toString());
                 if (compraConcedida == false) {
@@ -293,7 +323,9 @@ public class ClienteRMI extends javax.swing.JFrame {
             } else {
                 JOptionPane.showMessageDialog(rootPane, "Sua compra não pode ser realizada!");
             }
-        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            
+            companhia.liberarAcesso(ids);
+        } catch (RemoteException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
 

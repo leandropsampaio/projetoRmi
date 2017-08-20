@@ -19,6 +19,55 @@ import java.util.logging.Logger;
  */
 public class CompanhiaImplementacao extends UnicastRemoteObject implements Companhia {
 
+    /**
+     * @return the lista
+     */
+    public List getLista() {
+        return lista;
+    }
+
+    /**
+     * @param lista the lista to set
+     */
+    public void setLista(List lista) {
+        this.lista = lista;
+    }
+
+    /**
+     * @return the listaTrechos
+     */
+    public List getListaTrechos() {
+        return listaTrechos;
+    }
+
+    /**
+     * @param listaTrechos the listaTrechos to set
+     */
+    public void setListaTrechos(List listaTrechos) {
+        this.listaTrechos = listaTrechos;
+    }
+
+    /**
+     * @param querRegCrit the querRegCrit to set
+     */
+    public void setQuerRegCrit(int[] querRegCrit) {
+        this.querRegCrit = querRegCrit;
+    }
+
+    /**
+     * @param temRegCrit the temRegCrit to set
+     */
+    public void setTemRegCrit(boolean[] temRegCrit) {
+        this.temRegCrit = temRegCrit;
+    }
+
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
+
     private List lista;
     private List listaTrechos;
     private List pedidos;
@@ -43,16 +92,16 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
 
     public void inicializarTrechos() {
 
-        lista = new ArrayList<>();
+        setLista(new ArrayList<>());
         try {
-            Iterator it = listaTrechos.iterator();
+            Iterator it = getListaTrechos().iterator();
             while (it.hasNext()) {
                 Trecho trecho = (Trecho) it.next();
-                if (trecho.getCompanhia() == id) {
-                    lista.add(trecho);
+                if (trecho.getCompanhia() == getId()) {
+                    getLista().add(trecho);
                 }
             }
-            listaTrechos = lista;
+            setListaTrechos(getLista());
         } catch (Exception ex) {
             System.out.println("ERRO!");
         }
@@ -61,7 +110,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
 
     @Override
     public List trechosDoServidor() {
-        return listaTrechos;
+        return getListaTrechos();
     }
 
     @Override
@@ -73,8 +122,8 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
         try {
             for (i = 1; i <= 3; i++) {
                 System.out.println("000000000000000");
-                if (i == id) {
-                    Iterator it = listaTrechos.iterator(); //cal
+                if (i == getId()) {
+                    Iterator it = getListaTrechos().iterator(); //cal
                     while (it.hasNext()) {
                         //dlm.addElement("AAA");
                         //Trecho trecho = (Trecho) it.next();
@@ -82,7 +131,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
                         System.out.println("aaaaa");
                     }
 
-                } else if (i != id) {
+                } else if (i != getId()) {
                     companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
                     List trechos = companhia.trechosDoServidor();
 
@@ -108,11 +157,11 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
         
         List listaAux = new ArrayList<>();
         boolean entrou = false;
-        Iterator it = listaTrechos.iterator();
+        Iterator it = getListaTrechos().iterator();
         String[] trechoSplit = trecho.split("-");
 
         //trechoSplit[2] = companhia do trecho
-        if (Integer.valueOf(trechoSplit[2]) == id) {
+        if (Integer.valueOf(trechoSplit[2]) == getId()) {
             while (it.hasNext()) {
                 Trecho trecho2 = (Trecho) it.next();
                 System.out.println("ID:" + trechoSplit[0] + " | ID:" + trecho2.getId());
@@ -131,7 +180,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
                     System.out.println("Comprou esse trecho!");
                     trecho2.setQuantAssentos(trecho2.getQuantAssentos() - 1);
                     if (trecho2.getQuantAssentos() == 0) {
-                        listaTrechos.remove(trecho2);
+                        getListaTrechos().remove(trecho2);
                     }
                 }
                 return true;
@@ -164,7 +213,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     public boolean removerTrecho(int idTrecho) throws RemoteException {
         List listaAux = new ArrayList<>();
         boolean entrou = false;
-        Iterator it = listaTrechos.iterator();
+        Iterator it = getListaTrechos().iterator();
 
         while (it.hasNext()) {
             Trecho trecho2 = (Trecho) it.next();
@@ -183,7 +232,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
                 System.out.println("Comprou esse trecho!");
                 trecho2.setQuantAssentos(trecho2.getQuantAssentos() - 1);
                 if (trecho2.getQuantAssentos() == 0) {
-                    listaTrechos.remove(trecho2);
+                    getListaTrechos().remove(trecho2);
                 }
             }
             return true;
@@ -191,10 +240,11 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     }
 
     @Override
-    public boolean pedirAcesso(int[] ids, int myLogiClock, int myServerId) throws RemoteException {
+    public synchronized boolean pedirAcesso(int[] ids, int myLogiClock, int myServerId) throws RemoteException {
         for (int i = 0; i < ids.length; i++) {
             if (autorizarAcesso(ids[i], myLogiClock, myServerId) == true) {
                 getTemRegCrit()[ids[i]] = true;
+                logiClock++;
             }
         }
         return true;
@@ -207,16 +257,36 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
      * @return
      */
     @Override
-    public boolean pedirAcessoInter(int ids[]) {
+    public synchronized boolean pedirAcessoInter(int ids[]) {
         int autorizar = ids.length;
         while (autorizar != 0) {
             for (int i = 0; i < ids.length; i++) {
                 if (getTemRegCrit()[ids[i]] == false && ids[i] != 0 && getQuerRegCrit()[ids[i]] == 0) {
                     getQuerRegCrit()[ids[i]] = 2;
                     ids[i] = 0;
+                    autorizar--; 
+                    System.out.println("Autorizado trecho " + ids[i]);
                 }
             }
         }
+        System.out.println("Verificado acesso interno");
+        return true;
+    }
+    
+    @Override
+    public synchronized boolean autorizarTotals(int[] ids){
+       boolean regCritInterna = false;
+       boolean regCritRemota = false;
+        while(!regCritInterna || !regCritRemota){
+           try {
+               regCritInterna = pedirAcessoInter(ids);
+
+               regCritRemota = pedirAcesso(ids, logiClock, serverId);
+
+           } catch (RemoteException ex) {
+               Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
+           }
+            }
         return true;
     }
 
@@ -229,17 +299,17 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
      * @return
      */
     @Override
-    public boolean autorizarAcesso(int id, int myLogiClock, int myServerId) {
-        CompanhiaImplementacao companhia = null;
-        for (int i = 1; i <= 3; i++) {
-            if (i != getServerId()) {
+    public synchronized boolean autorizarAcesso(int id, int myLogiClock, int myServerId) {
+        Companhia comp;
+        for (int i = 1; i < 2; i++) {
+            if (i != serverId) {
                 try {
-                    companhia = (CompanhiaImplementacao) Naming.lookup("127.0.0.1/PassagensAreas" + i);
-                    if (companhia.getTemRegCrit()[id] == true) {
+                    comp = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                    if (comp.getTemRegCrit()[id] == true) {
                         autorizarAcesso(id, myLogiClock, myServerId);
-                    } else if (companhia.getQuerRegCrit()[id] == 1 && (getLogiClock() == myLogiClock) && (getServerId() > myServerId)) {
+                    } else if (comp.getQuerRegCrit()[id] == 1 && (getLogiClock() == myLogiClock) && (getServerId() > myServerId)) {
                         autorizarAcesso(id, myLogiClock, myServerId);
-                    } else if ((companhia.getQuerRegCrit()[id] == 1) && (getLogiClock() > myLogiClock)) {
+                    } else if ((comp.getQuerRegCrit()[id] == 1) && (getLogiClock() > myLogiClock)) {
                         autorizarAcesso(id, myLogiClock, myServerId);
                     }
                 } catch (NotBoundException ex) {
@@ -251,14 +321,22 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
                 }
             }
         }
+        
+        System.out.println("Verificado acesso remoto");
         return true;
     }
-
+    
+    
+    /**
+     * Sai da região crítica
+     * @param ids
+     * @throws RemoteException 
+     */
     @Override
-    public void liberarAcesso(int[] ids) throws RemoteException {
+    public synchronized void liberarAcesso(int[] ids) throws RemoteException {
         for (int i = 0; i < ids.length; i++) {
-            querRegCrit[ids[i]] = 0;
-            temRegCrit[ids[i]] = false;
+            getQuerRegCrit()[ids[i]] = 0;
+            getTemRegCrit()[ids[i]] = false;
         }
     }
 
@@ -293,30 +371,19 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     /**
      * @return the querRegCrit
      */
+    @Override
     public int[] getQuerRegCrit() {
         return querRegCrit;
     }
 
     /**
-     * @param querRegCrit the querRegCrit to set
-     */
-    public void setQuerRegCrit(int[] querRegCrit) {
-        this.querRegCrit = querRegCrit;
-    }
-
-    /**
      * @return the temRegCrit
      */
+    @Override
     public boolean[] getTemRegCrit() {
         return temRegCrit;
     }
 
-    /**
-     * @param temRegCrit the temRegCrit to set
-     */
-    public void setTemRegCrit(boolean[] temRegCrit) {
-        this.temRegCrit = temRegCrit;
-    }
 
     /**
      * @return the logiClock
