@@ -105,7 +105,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
 
     @Override
     public boolean comprar(String trecho) throws RemoteException {
-
+        
         List listaAux = new ArrayList<>();
         boolean entrou = false;
         Iterator it = listaTrechos.iterator();
