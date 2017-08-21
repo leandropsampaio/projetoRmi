@@ -11,12 +11,13 @@ import java.io.Serializable;
 public class Trecho implements Serializable {
 
     private int id;
+    private int status;
     private String origem;
     private String destino;
     private int companhia;
     private int quantAssentos;
 
-    public Trecho(int id, String origem, String destino, int companhia, int quantAssentos) {
+    public Trecho(int id, String origem, String destino, int companhia, int quantAssentos, int status) {
         this.id = id;
         this.origem = origem;
         this.destino = destino;
@@ -30,6 +31,14 @@ public class Trecho implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     /**
@@ -81,4 +90,5 @@ public class Trecho implements Serializable {
     public void setQuantAssentos(int quantAssentos) {
         this.quantAssentos = quantAssentos;
     }
+
 }

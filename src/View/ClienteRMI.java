@@ -116,6 +116,11 @@ public class ClienteRMI extends javax.swing.JFrame {
 
         buttonReservar.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
         buttonReservar.setText("Reservar");
+        buttonReservar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonReservarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -172,8 +177,15 @@ public class ClienteRMI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonMostrarTrechosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonMostrarTrechosActionPerformed
-        mostrarTrechos();
+        //limpar a lista de trechos
+        /*
+        dlm.removeAllElements();
+        dlm2.removeAllElements();
+        listaTrechos.setModel(dlm);
+        listaReservas.setModel(dlm2);
+         */
 
+        mostrarTrechos();
     }//GEN-LAST:event_buttonMostrarTrechosActionPerformed
 
     private void buttonEscolherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEscolherActionPerformed
@@ -191,6 +203,7 @@ public class ClienteRMI extends javax.swing.JFrame {
     private void buttonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmarActionPerformed
         comprar(dlm2.toArray());
 
+        //limpar a lista de trechos
         dlm.removeAllElements();
         dlm2.removeAllElements();
         listaTrechos.setModel(dlm);
@@ -198,6 +211,10 @@ public class ClienteRMI extends javax.swing.JFrame {
 
         mostrarTrechos();
     }//GEN-LAST:event_buttonConfirmarActionPerformed
+
+    private void buttonReservarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonReservarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buttonReservarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -285,20 +302,21 @@ public class ClienteRMI extends javax.swing.JFrame {
         boolean compraConcedida = false;
         try {
             //companhia2 = (CompanhiaImplementacao) Naming.lookup("127.0.0.1/PassagensAreas" + id);
-            
+
             //Transforma trechos em vetor de ids
-            for (int i = 0; i<trechos.length; i++) {
+            for (int i = 0; i < trechos.length; i++) {
+                System.out.println("AQUI:" + i);
                 objetoTrecho2 = trechos[i];
                 String protocolo[] = objetoTrecho2.toString().split("-");
                 ids[i] = Integer.parseInt(protocolo[0]);
-                System.out.println(ids[i]+"////"+trechos[i]);
+                System.out.println(ids[i] + "////" + trechos[i]);
             }
             //Pede autorização para entrar na região critica
-            while(!regCrit){
+            while (!regCrit) {
                 regCrit = companhia.autorizarTotals(ids);
             }
             //
-            
+
 //            while(!regCritInterna || !regCritRemota){
 //                companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
 //                companhia2 = (CompanhiaImplementacao) companhia2;
@@ -322,7 +340,7 @@ public class ClienteRMI extends javax.swing.JFrame {
             } else {
                 JOptionPane.showMessageDialog(rootPane, "Sua compra não pode ser realizada!");
             }
-            
+
             companhia.liberarAcesso(ids);
         } catch (RemoteException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
@@ -332,6 +350,11 @@ public class ClienteRMI extends javax.swing.JFrame {
 
     private void setIcon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/plane.png")));
+    }
+    
+    private void reservar(Object[] trechos) {
+        
+        
     }
 
     /*
