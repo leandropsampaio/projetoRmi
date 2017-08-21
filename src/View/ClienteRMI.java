@@ -280,7 +280,6 @@ public class ClienteRMI extends javax.swing.JFrame {
 
     private void comprar(Object[] trechos) {
         int ids[] = new int[trechos.length];
-        Trecho trecho = null;
         Object objetoTrecho2 = null;
         boolean regCrit = false;
         boolean compraConcedida = false;
