@@ -116,12 +116,12 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     @Override
     public List trechos() {
 
-        System.out.println("xxxxxx");
+        //System.out.println("xxxxxx");
         List trechosServidores = new ArrayList<>();;
         int i = 0;
         try {
             for (i = 1; i <= 3; i++) {
-                System.out.println("000000000000000");
+                //System.out.println("000000000000000");
                 if (i == getId()) {
                     Iterator it = getListaTrechos().iterator(); //cal
                     while (it.hasNext()) {
@@ -140,10 +140,10 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
                         //dlm.addElement("BBB");
                         //Trecho trecho = (Trecho) it.next();
                         trechosServidores.add(it.next());
-                        System.out.println("bbbb");
+                        //System.out.println("bbbb");
                     }
                 }
-                System.out.println("cccccccc");
+                //System.out.println("cccccccc");
             }
         } catch (RemoteException | MalformedURLException ex) {
         } catch (NotBoundException ex) {
@@ -154,7 +154,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
 
     @Override
     public boolean comprar(String trecho) throws RemoteException {
-        
+
         List listaAux = new ArrayList<>();
         boolean entrou = false;
         Iterator it = getListaTrechos().iterator();
@@ -264,7 +264,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
                 if (getTemRegCrit()[ids[i]] == false && ids[i] != 0 && getQuerRegCrit()[ids[i]] == 0) {
                     getQuerRegCrit()[ids[i]] = 2;
                     ids[i] = 0;
-                    autorizar--; 
+                    autorizar--;
                     System.out.println("Autorizado trecho " + ids[i]);
                 }
             }
@@ -272,21 +272,21 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
         System.out.println("Verificado acesso interno");
         return true;
     }
-    
+
     @Override
-    public synchronized boolean autorizarTotals(int[] ids){
-       boolean regCritInterna = false;
-       boolean regCritRemota = false;
-        while(!regCritInterna || !regCritRemota){
-           try {
-               regCritInterna = pedirAcessoInter(ids);
+    public synchronized boolean autorizarTotals(int[] ids) {
+        boolean regCritInterna = false;
+        boolean regCritRemota = false;
+        while (!regCritInterna || !regCritRemota) {
+            try {
+                regCritInterna = pedirAcessoInter(ids);
 
-               regCritRemota = pedirAcesso(ids, logiClock, serverId);
-
-           } catch (RemoteException ex) {
-               Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
-           }
+                regCritRemota = pedirAcesso(ids, logiClock, serverId);
+                System.out.println("aaaaa");
+            } catch (RemoteException ex) {
+                Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
         return true;
     }
 
@@ -301,7 +301,9 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     @Override
     public synchronized boolean autorizarAcesso(int id, int myLogiClock, int myServerId) {
         Companhia comp;
-        for (int i = 1; i < 2; i++) {
+        ///////////////////////////////// Talvez i<3
+        for (int i = 1; i < 3; i++) {
+            System.out.println("AQUI!");
             if (i != serverId) {
                 try {
                     comp = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
@@ -321,16 +323,16 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
                 }
             }
         }
-        
+
         System.out.println("Verificado acesso remoto");
         return true;
     }
-    
-    
+
     /**
      * Sai da região crítica
+     *
      * @param ids
-     * @throws RemoteException 
+     * @throws RemoteException
      */
     @Override
     public synchronized void liberarAcesso(int[] ids) throws RemoteException {
@@ -383,7 +385,6 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     public boolean[] getTemRegCrit() {
         return temRegCrit;
     }
-
 
     /**
      * @return the logiClock
