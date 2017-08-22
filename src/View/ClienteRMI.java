@@ -336,7 +336,7 @@ public class ClienteRMI extends javax.swing.JFrame {
         boolean regCrit = false;
         boolean compraConcedida = false;
         try {
-            //companhia2 = (CompanhiaImplementacao) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
 
             //Transforma trechos em vetor de ids
             for (int i = 0; i < trechos.length; i++) {
@@ -379,6 +379,10 @@ public class ClienteRMI extends javax.swing.JFrame {
             companhia.liberarAcesso(ids);
         } catch (RemoteException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NotBoundException ex) {
+            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -386,9 +390,48 @@ public class ClienteRMI extends javax.swing.JFrame {
     private void setIcon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/plane.png")));
     }
+    
+    private void liberarRegCrit(int[] ids){ 
+        try {
+            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+            companhia.liberarAcesso(ids);
+        } catch (RemoteException | NotBoundException | MalformedURLException ex) {
+            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private int[] pedirAcesso(Object[] trechos){
+        int ids[] = new int[trechos.length];
+        Object objetoTrecho2;
+        boolean regCrit = false;
+        try {
+            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //Transforma trechos em vetor de ids
+            for (int i = 0; i < trechos.length; i++) {
+                System.out.println("AQUI:" + i);
+                objetoTrecho2 = trechos[i];
+                String protocolo[] = objetoTrecho2.toString().split("-");
+                ids[i] = Integer.parseInt(protocolo[0]);
+                System.out.println(ids[i] + "////" + trechos[i]);
+            }
+            //Pede autorização para entrar na região critica
+            while (!regCrit) {
+                try {
+                    regCrit = companhia.autorizarTotals(ids);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+            return ids;   
+    }
 
     private void reservar(Object[] trechos) {
         int statusDoTrecho = 0;
+        int[] ids = pedirAcesso(trechos);
         switch (statusDoTrecho) {
 
             case 1: //chama função para reservar o trecho
@@ -417,6 +460,7 @@ public class ClienteRMI extends javax.swing.JFrame {
             default:
                 break;
         }
+        liberarRegCrit(ids);
     }
 
     public void contagem() {
