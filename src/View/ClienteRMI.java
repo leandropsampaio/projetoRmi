@@ -44,7 +44,8 @@ public class ClienteRMI extends javax.swing.JFrame {
         id = Integer.valueOf(JOptionPane.showInputDialog("Digite o id da companhia que você deseja se conectar:"));
         setIcon();
         initComponents();
-        //buttonConfirmar.setEnabled(false);
+        buttonConfirmar.setEnabled(false);
+        buttonCancelar.setEnabled(false);
     }
 
     /**
@@ -66,6 +67,8 @@ public class ClienteRMI extends javax.swing.JFrame {
         buttonConfirmar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         buttonReservar = new javax.swing.JButton();
+        label = new javax.swing.JLabel();
+        buttonCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Passagens Aéreas");
@@ -91,7 +94,7 @@ public class ClienteRMI extends javax.swing.JFrame {
         });
 
         buttonRemover.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
-        buttonRemover.setText("Remover");
+        buttonRemover.setText("<= Remover");
         buttonRemover.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonRemoverActionPerformed(evt);
@@ -122,55 +125,83 @@ public class ClienteRMI extends javax.swing.JFrame {
             }
         });
 
+        label.setFont(new java.awt.Font("Trajan Pro", 0, 48)); // NOI18N
+        label.setForeground(new java.awt.Color(255, 0, 0));
+        label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        buttonCancelar.setBackground(new java.awt.Color(255, 0, 0));
+        buttonCancelar.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
+        buttonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/cancel.png"))); // NOI18N
+        buttonCancelar.setText("Cancelar");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(buttonEscolher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(buttonRemover, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(99, 99, 99)
-                .addComponent(buttonMostrarTrechos)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(buttonReservar)
-                .addGap(61, 61, 61)
-                .addComponent(buttonConfirmar)
-                .addGap(29, 29, 29))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(248, 248, 248))
+                .addGap(214, 214, 214))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(99, 99, 99)
+                        .addComponent(buttonMostrarTrechos)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(buttonEscolher)
+                            .addComponent(buttonRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(buttonReservar)
+                        .addGap(136, 136, 136))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(350, 350, 350)
+                .addComponent(buttonCancelar)
+                .addGap(18, 18, 18)
+                .addComponent(buttonConfirmar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jScrollPane1)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(143, 143, 143)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(buttonEscolher)
                         .addGap(73, 73, 73)
-                        .addComponent(buttonRemover)))
+                        .addComponent(buttonRemover)
+                        .addGap(56, 56, 56)
+                        .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(buttonMostrarTrechos)
+                            .addComponent(buttonReservar))
+                        .addGap(41, 41, 41))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(buttonConfirmar)
-                        .addComponent(buttonReservar))
-                    .addComponent(buttonMostrarTrechos))
-                .addContainerGap())
+                        .addComponent(buttonCancelar)))
+                .addGap(4, 4, 4))
         );
 
         pack();
@@ -213,7 +244,9 @@ public class ClienteRMI extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonConfirmarActionPerformed
 
     private void buttonReservarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonReservarActionPerformed
-        // TODO add your handling code here:
+
+        contagem();
+
     }//GEN-LAST:event_buttonReservarActionPerformed
 
     /**
@@ -259,6 +292,7 @@ public class ClienteRMI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonCancelar;
     private javax.swing.JButton buttonConfirmar;
     private javax.swing.JButton buttonEscolher;
     private javax.swing.JButton buttonMostrarTrechos;
@@ -267,6 +301,7 @@ public class ClienteRMI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel label;
     private javax.swing.JList<String> listaReservas;
     private javax.swing.JList<String> listaTrechos;
     // End of variables declaration//GEN-END:variables
@@ -352,10 +387,39 @@ public class ClienteRMI extends javax.swing.JFrame {
     private void setIcon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/plane.png")));
     }
-    
+
     private void reservar(Object[] trechos) {
-        
-        
+
+    }
+
+
+    public void contagem() {
+
+        new Thread() {
+            @Override
+            public void run() {
+                int contador = 2;
+                while (true) {
+                    try {
+                        //Contagem ilimitada
+                        Thread.sleep(1000);   //No caso, correspondente ao tempo de drift
+                    } catch (InterruptedException ex) {
+                        System.out.println("ERRO!");
+                    }
+
+                    contador = contador - 1;   //Variável de controle do tempo
+
+                    label.setText(String.valueOf(contador));
+
+                    if (contador == 0) {
+                        break;
+                    }
+
+                    buttonConfirmar.setEnabled(true);
+                    buttonCancelar.setEnabled(true);
+                }
+            }
+        }.start();
     }
 
     /*
