@@ -234,7 +234,7 @@ public class ClienteRMI extends javax.swing.JFrame {
     private void buttonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmarActionPerformed
         comprar(dlm2.toArray());
 
-        //limpar a lista de trechos
+        //limpar a lista de trechos escolhidos
         dlm.removeAllElements();
         dlm2.removeAllElements();
         listaTrechos.setModel(dlm);
@@ -244,8 +244,8 @@ public class ClienteRMI extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonConfirmarActionPerformed
 
     private void buttonReservarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonReservarActionPerformed
-
-        contagem();
+        reservar(dlm2.toArray());
+        //contagem();
 
     }//GEN-LAST:event_buttonReservarActionPerformed
 
@@ -332,7 +332,6 @@ public class ClienteRMI extends javax.swing.JFrame {
 
     private void comprar(Object[] trechos) {
         int ids[] = new int[trechos.length];
-        Trecho trecho = null;
         Object objetoTrecho2 = null;
         boolean regCrit = false;
         boolean compraConcedida = false;
@@ -389,16 +388,43 @@ public class ClienteRMI extends javax.swing.JFrame {
     }
 
     private void reservar(Object[] trechos) {
+        int statusDoTrecho = 0;
+        switch (statusDoTrecho) {
 
+            case 1: //chama função para reservar o trecho
+                buttonConfirmar.setEnabled(true);
+                buttonCancelar.setEnabled(true);
+                contagem();
+                System.out.println("ss");
+                break; //Todos os trechos disponíveis
+
+            case 2: //chama função para ir pra lista de espera
+                buttonConfirmar.setEnabled(false);
+                buttonCancelar.setEnabled(false);
+                contagem();
+                break; //Caso exatamente 1 trecho esteja reservado e o resto disponível
+            case 3: //nega a requisição
+
+                buttonConfirmar.setEnabled(false);
+                buttonCancelar.setEnabled(false);
+                
+                //limpar a lista de trechos escolhidos
+                dlm.removeAllElements();
+                dlm2.removeAllElements();
+                listaTrechos.setModel(dlm);
+                listaReservas.setModel(dlm2);
+                JOptionPane.showMessageDialog(rootPane, "Alguns desses trechos não mais estão disponíveis! Tente novamente...");
+            default:
+                break;
+        }
     }
-
 
     public void contagem() {
 
         new Thread() {
             @Override
             public void run() {
-                int contador = 2;
+                int contador = 2; // Valor que inicia o contador
                 while (true) {
                     try {
                         //Contagem ilimitada
@@ -414,9 +440,6 @@ public class ClienteRMI extends javax.swing.JFrame {
                     if (contador == 0) {
                         break;
                     }
-
-                    buttonConfirmar.setEnabled(true);
-                    buttonCancelar.setEnabled(true);
                 }
             }
         }.start();
