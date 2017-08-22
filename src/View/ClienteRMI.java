@@ -353,8 +353,21 @@ public class ClienteRMI extends javax.swing.JFrame {
     }
     
     private void reservar(Object[] trechos) {
+        int statusDoTrecho = 0;
+        switch (statusDoTrecho) {
         
         
+            case 1: //chama função para reservar o trecho
+                break; //Todos os trechos disponíveis
+        
+            case 2: //chama função para ir pra lista de espera
+                break; //Caso exatamente 1 trecho esteja reservado e o resto disponível
+        
+            case 3: //nega a requisição
+                break; //Qualquer trecho comprado ou 2 ou mais trechos reservados
+            default:
+                break;
+        }
     }
 
     /*
