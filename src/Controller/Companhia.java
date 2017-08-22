@@ -33,4 +33,12 @@ public interface Companhia extends Remote {
     public int[] getQuerRegCrit() throws RemoteException;
 
     public int checarDisp(int[] ids) throws RemoteException;
+    
+    public boolean comprar(int ids[]) throws RemoteException;
+    
+    public boolean reservando(int ids[]) throws RemoteException;
+    
+    public boolean listaDeEspera1(int ids[]) throws RemoteException;
+    
+    public boolean listaDeEspera2(int ids[]) throws RemoteException;
 }

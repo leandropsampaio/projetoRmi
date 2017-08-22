@@ -76,6 +76,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     private int logiClock;
     private int serverId;
     private final int id;
+    private boolean[] listaDeEspera;
     private Companhia companhia;
 
     public CompanhiaImplementacao(int id) throws RemoteException {
@@ -87,6 +88,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
         logiClock = 0;
         querRegCrit = new int[31];
         temRegCrit = new boolean[31];
+        listaDeEspera = new boolean[31];
         inicializarTrechos();
     }
 
@@ -398,5 +400,116 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
      */
     public void setLogiClock(int logiClock) {
         this.logiClock = logiClock;
+    }
+
+    @Override
+    public int checarDisp(int[] ids) throws RemoteException {
+        List trechos = this.trechos();
+        Iterator it = trechos.iterator();
+        int dispo = 0;
+        int reservados = 0;
+        for(int i = 0; i < ids.length; i++){
+            while(it.hasNext()){
+                Trecho trecho = (Trecho) it.next();
+                if(trecho.getId() == ids[i]){
+                    if(trecho.getStatus() == 2){
+                        return 2;
+                    }
+                }
+                else if (trecho.getId() == 1){
+                    reservados++;
+                    dispo = 1;
+                    if(reservados > 1 || listaDeEspera[ids[i]]){
+                        return 2;
+                    }
+                }
+            }
+        }
+        return dispo;
+    }
+    
+    /**
+     * Reserva todos os trechos
+     * @param ids
+     * @return 
+     */
+    @Override
+    public boolean reservando(int ids[]){
+        List trechos = this.trechos();
+        Iterator it = trechos.iterator();
+        for(int i = 0; i < ids.length; i++){
+            while(it.hasNext()){
+                Trecho trecho = (Trecho) it.next();
+                if(trecho.getId() == ids[i]){
+                    trecho.setStatus(1);
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Compra todos os trechos
+     * @param ids
+     * @return 
+     */
+    @Override
+    public boolean comprar(int ids[]){
+        List trechos = this.trechos();
+        Iterator it = trechos.iterator();
+        for(int i = 0; i < ids.length; i++){
+            while(it.hasNext()){
+                Trecho trecho = (Trecho) it.next();
+                if(trecho.getId() == ids[i]){
+                    trecho.setStatus(2);
+                }
+            }
+        }
+        return true;
+    }
+    /**
+     * Reserva todos os trechos disponíveis e fica na lista de espera pelo que está reservado
+     * @param ids
+     * @return 
+     */
+    @Override
+    public boolean listaDeEspera1(int ids[]){
+        List trechos = this.trechos();
+        Iterator it = trechos.iterator();
+        for(int i = 0; i < ids.length; i++){
+            while(it.hasNext()){
+                Trecho trecho = (Trecho) it.next();
+                if(trecho.getId() == ids[i]){
+                    if(trecho.getId() == 0)
+                    trecho.setStatus(1);
+                }
+                else{
+                    listaDeEspera[ids[i]] = true;
+                }
+            }
+        }
+        return true;
+    }
+    /**
+     * Torna disponíveis de novo os trechos quando o trecho na lista de espera é comprado por outra pessoa
+     * @param ids
+     * @return 
+     */
+    @Override
+    public boolean listaDeEspera2(int ids[]){
+        List trechos = this.trechos();
+        Iterator it = trechos.iterator();
+        for(int i = 0; i < ids.length; i++){
+            while(it.hasNext()){
+                Trecho trecho = (Trecho) it.next();
+                if(trecho.getId() == ids[i]){
+                    trecho.setStatus(0);
+                    if(listaDeEspera[ids[i]]){
+                        listaDeEspera[ids[i]] = false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

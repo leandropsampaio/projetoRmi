@@ -46,6 +46,11 @@ public class ClienteRMI extends javax.swing.JFrame {
         initComponents();
         buttonConfirmar.setEnabled(false);
         buttonCancelar.setEnabled(false);
+        try {
+            companhia  = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -309,7 +314,6 @@ public class ClienteRMI extends javax.swing.JFrame {
     public void mostrarTrechos() {
         List trechos;
         try {
-            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
             trechos = companhia.trechos();
 
             Iterator it = trechos.iterator();
@@ -321,48 +325,18 @@ public class ClienteRMI extends javax.swing.JFrame {
             }
         } catch (RemoteException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NotBoundException ex) {
-            System.err.println("Servidor: | " + id + " | não iniciado! Execute o servidor...");
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         listaTrechos.setModel(dlm);
     }
 
     private void comprar(Object[] trechos) {
-        int ids[] = new int[trechos.length];
-        Object objetoTrecho2 = null;
-        boolean regCrit = false;
+        int ids[];
         boolean compraConcedida = false;
         try {
-            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
-
-            //Transforma trechos em vetor de ids
-            for (int i = 0; i < trechos.length; i++) {
-                System.out.println("AQUI:" + i);
-                objetoTrecho2 = trechos[i];
-                String protocolo[] = objetoTrecho2.toString().split("-");
-                ids[i] = Integer.parseInt(protocolo[0]);
-                System.out.println(ids[i] + "////" + trechos[i]);
-            }
-            //Pede autorização para entrar na região critica
-            while (!regCrit) {
-                regCrit = companhia.autorizarTotals(ids);
-            }
-            //
-
-//            while(!regCritInterna || !regCritRemota){
-//                companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
-//                companhia2 = (CompanhiaImplementacao) companhia2;
-//                regCritInterna = companhia2.pedirAcessoInter(ids);
-//                for(int i = 1; i <=3; i++){
-//                    if(i != id){
-//                        companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
-//                        regCritRemota = companhia2.pedirAcesso(ids, companhia2.getLogiClock(), companhia2.getServerId());
-//                    }
-//                }
-//            }
+            //Pede acesso
+            ids = this.pedirAcesso(trechos);
+            
             for (Object objetoTrecho : trechos) {
                 compraConcedida = companhia.comprar(objetoTrecho.toString());
                 if (compraConcedida == false) {
@@ -376,12 +350,8 @@ public class ClienteRMI extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(rootPane, "Sua compra não pode ser realizada!");
             }
 
-            companhia.liberarAcesso(ids);
+            this.liberarRegCrit(ids);
         } catch (RemoteException ex) {
-            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NotBoundException ex) {
-            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MalformedURLException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -393,9 +363,8 @@ public class ClienteRMI extends javax.swing.JFrame {
     
     private void liberarRegCrit(int[] ids){ 
         try {
-            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
             companhia.liberarAcesso(ids);
-        } catch (RemoteException | NotBoundException | MalformedURLException ex) {
+        } catch (RemoteException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -404,11 +373,6 @@ public class ClienteRMI extends javax.swing.JFrame {
         int ids[] = new int[trechos.length];
         Object objetoTrecho2;
         boolean regCrit = false;
-        try {
-            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
-        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
-            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
-        }
         //Transforma trechos em vetor de ids
             for (int i = 0; i < trechos.length; i++) {
                 System.out.println("AQUI:" + i);
@@ -429,38 +393,53 @@ public class ClienteRMI extends javax.swing.JFrame {
             return ids;   
     }
 
-    private void reservar(Object[] trechos) {
-        int statusDoTrecho = 0;
-        int[] ids = pedirAcesso(trechos);
-        switch (statusDoTrecho) {
-
-            case 1: //chama função para reservar o trecho
-                buttonConfirmar.setEnabled(true);
-                buttonCancelar.setEnabled(true);
-                contagem();
-                System.out.println("ss");
-                break; //Todos os trechos disponíveis
-
-            case 2: //chama função para ir pra lista de espera
-                buttonConfirmar.setEnabled(false);
-                buttonCancelar.setEnabled(false);
-                contagem();
-                break; //Caso exatamente 1 trecho esteja reservado e o resto disponível
-            case 3: //nega a requisição
-
-                buttonConfirmar.setEnabled(false);
-                buttonCancelar.setEnabled(false);
+    private void reservar(Object[] trechos){
+        try {
+            int statusDoTrecho = 0;
+            int[] ids = pedirAcesso(trechos);
+            try {
+                statusDoTrecho = companhia.checarDisp(ids);
+            } catch (RemoteException ex) {
+                Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            switch (statusDoTrecho) {
                 
-                //limpar a lista de trechos escolhidos
-                dlm.removeAllElements();
-                dlm2.removeAllElements();
-                listaTrechos.setModel(dlm);
-                listaReservas.setModel(dlm2);
-                JOptionPane.showMessageDialog(rootPane, "Alguns desses trechos não mais estão disponíveis! Tente novamente...");
-            default:
-                break;
+                case 1: //chama função para reservar o trecho
+                    companhia.reservando(ids);
+                    buttonConfirmar.setEnabled(true);
+                    buttonCancelar.setEnabled(true);
+                    contagem();
+                    System.out.println("ss");
+                    break; //Todos os trechos disponíveis
+                    
+                case 2: //chama função para ir pra lista de espera
+                    buttonConfirmar.setEnabled(false);
+                    buttonCancelar.setEnabled(false);
+                    contagem();
+                    break; //Caso exatamente 1 trecho esteja reservado e o resto disponível
+                    
+                case 3: //nega a requisição
+                    buttonConfirmar.setEnabled(false);
+                    buttonCancelar.setEnabled(false);
+                    
+                    //limpar a lista de trechos escolhidos
+                    dlm.removeAllElements();
+                    dlm2.removeAllElements();
+                    listaTrechos.setModel(dlm);
+                    listaReservas.setModel(dlm2);
+                    JOptionPane.showMessageDialog(rootPane, "Alguns desses trechos não mais estão disponíveis! Tente novamente...");
+                default:
+                    break;
+            }
+            liberarRegCrit(ids);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        liberarRegCrit(ids);
+    }
+    
+    public void reservado(){
+        
     }
 
     public void contagem() {
@@ -488,53 +467,4 @@ public class ClienteRMI extends javax.swing.JFrame {
             }
         }.start();
     }
-
-    /*
-    public void Servidor() {
-        try {
-            System.out.println("Digite o id da Companhia Aérea:");
-            id = leitura.nextInt();
-            System.out.println("Digite a porta do servidor:");
-            int porta = leitura.nextInt();
-
-            LocateRegistry.createRegistry(porta);
-            cal = new CompanhiaImplementacao();
-            Naming.rebind("127.0.0.1/PassagensAreas" + id, (Remote) cal);
-
-            //leitura.nextLine();
-            //leitura.nextLine();
-            //fazerConexões();
-            System.out.println("Servidor Remoto Iniciado...");
-        } catch (RemoteException | MalformedURLException ex) {
-            System.err.println("ERRO: " + ex.getMessage());
-        }
-    }*/
-    /**
-     * Fazer conexões com outras companhias aéreas
-     *
-     */
-    /*
-    public void fazerConexões() {
-        try {
-            for (int i = 1; i <= 3; i++) {
-                if (i != id) {
-                    calculadora = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
-                    ***
-                    List trechos = calculadora.trechos(i);
-
-                    Iterator it = trechos.iterator();
-                    while(it.hasNext()){
-                        Trecho trecho = (Trecho) it.next();
-                        System.out.println("________________________________________________");
-                        System.out.println("Origem: "+trecho.getOrigem());
-                        System.out.println("Destino: "+trecho.getDestino());
-                        System.out.println("________________________________________________");
-                    }
-                    ***
-                }
-            }
-        } catch (Exception ex) {
-            System.err.println("ERRO: " + ex.getMessage());
-        }
-    }*/
 }
