@@ -85,8 +85,8 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
         lista = new ArrayList<>();
         pedidos = new ArrayList<>();
         logiClock = 0;
-        querRegCrit = new int[30];
-        temRegCrit = new boolean[30];
+        querRegCrit = new int[31];
+        temRegCrit = new boolean[31];
         inicializarTrechos();
     }
 
@@ -259,11 +259,11 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     @Override
     public synchronized boolean pedirAcessoInter(int ids[]) {
         int autorizar = ids.length;
+        System.out.println(""+ids.length);
         while (autorizar != 0) {
             for (int i = 0; i < ids.length; i++) {
-                if (getTemRegCrit()[ids[i]] == false && ids[i] != 0 && getQuerRegCrit()[ids[i]] == 0) {
+                if (getTemRegCrit()[ids[i]] == false && getQuerRegCrit()[ids[i]] == 0) {
                     getQuerRegCrit()[ids[i]] = 2;
-                    ids[i] = 0;
                     autorizar--;
                     System.out.println("Autorizado trecho " + ids[i]);
                 }
@@ -302,7 +302,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     public synchronized boolean autorizarAcesso(int id, int myLogiClock, int myServerId) {
         Companhia comp;
         ///////////////////////////////// Talvez i<3
-        for (int i = 1; i < 3; i++) {
+        for (int i = 1; i <= 3; i++) {
             System.out.println("AQUI!");
             if (i != serverId) {
                 try {
