@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.Trecho;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -41,4 +42,8 @@ public interface Companhia extends Remote {
     public boolean listaDeEspera1(int ids[]) throws RemoteException;
     
     public boolean listaDeEspera2(int ids[]) throws RemoteException;
+    
+    public boolean desistir(int ids[]) throws RemoteException;
+    
+    public void trocarStatus(Trecho trecho, int status) throws RemoteException;
 }

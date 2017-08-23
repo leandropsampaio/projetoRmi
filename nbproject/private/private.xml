@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/Network/Servidor.java</file>
             <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/Controller/CompanhiaImplementacao.java</file>
-            <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/View/ServidorRMI.java</file>
             <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/View/ClienteRMI.java</file>
+            <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/Model/Trecho.java</file>
+            <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/Model/Trechos.java</file>
             <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/Controller/Companhia.java</file>
         </group>
     </open-files>

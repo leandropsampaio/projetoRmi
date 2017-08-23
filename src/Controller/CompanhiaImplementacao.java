@@ -82,6 +82,7 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     public CompanhiaImplementacao(int id) throws RemoteException {
         super();
         this.id = id;
+        this.serverId = id;
         listaTrechos = Trechos.retornarListaTrechos();
         lista = new ArrayList<>();
         pedidos = new ArrayList<>();
@@ -279,7 +280,6 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     public synchronized boolean autorizarTotals(int[] ids) {
         boolean regCritInterna = false;
         boolean regCritRemota = false;
-        while (!regCritInterna || !regCritRemota) {
             try {
                 regCritInterna = pedirAcessoInter(ids);
 
@@ -288,7 +288,10 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
             } catch (RemoteException ex) {
                 Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+            if(regCritInterna && regCritRemota){
+                System.out.println("Tudo ok");
+            }
+        System.out.println("bbbbbbbbbbbbb");
         return true;
     }
 
@@ -303,7 +306,6 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
     @Override
     public synchronized boolean autorizarAcesso(int id, int myLogiClock, int myServerId) {
         Companhia comp;
-        ///////////////////////////////// Talvez i<3
         for (int i = 1; i <= 3; i++) {
             System.out.println("AQUI!");
             if (i != serverId) {
@@ -404,29 +406,89 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
 
     @Override
     public int checarDisp(int[] ids) throws RemoteException {
-        List trechos = this.trechos();
-        Iterator it = trechos.iterator();
         int dispo = 0;
-        int reservados = 0;
-        for(int i = 0; i < ids.length; i++){
-            while(it.hasNext()){
-                Trecho trecho = (Trecho) it.next();
-                if(trecho.getId() == ids[i]){
-                    if(trecho.getStatus() == 2){
-                        return 2;
+        int reservados = 0;    
+        
+        for(int i = 1; i<=3; i++){
+            System.out.println("11111111111111111");
+            if(i != serverId){
+                System.out.println("222222222222222");
+                try {
+                    companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                    List trechos = companhia.trechosDoServidor();
+                    Iterator it = trechos.iterator();
+                    for( int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                if(trecho.getStatus() == 2){
+                                    return 2;
+                                }
+                                else if (trecho.getStatus() == 1){
+                                    System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                                    reservados++;
+                                    dispo = 1;
+                                    if(reservados > 1 || listaDeEspera[ids[s]]){
+                                        return 2;
+                                    }
+                                }
+                            }
+                            
+                        }
                     }
+                } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+                    Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                else if (trecho.getId() == 1){
-                    reservados++;
-                    dispo = 1;
-                    if(reservados > 1 || listaDeEspera[ids[i]]){
-                        return 2;
+            }
+            else{
+                System.out.println("333333333333333333333");
+                Iterator it = this.listaTrechos.iterator();
+                    for( int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                if(trecho.getStatus() == 2){
+                                    return 2;
+                                }
+                                else if (trecho.getStatus() == 1){
+                                    reservados++;
+                                    dispo = 1;
+                                    if(reservados > 1 || listaDeEspera[ids[s]]){
+                                        return 2;
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
             }
         }
         return dispo;
     }
+    
+    @Override
+    public void trocarStatus(Trecho trecho, int status){
+        
+    Iterator it = this.listaTrechos.iterator();
+                        while(it.hasNext()){
+                            System.out.println("0000000000000000000000");
+                            Trecho trecho2 = (Trecho) it.next();
+                            if(trecho.getId() == trecho2.getId()){
+                                System.out.println("88888888888888888888888888");
+                                trecho2.setStatus(status);
+                            }
+                        }
+                        
+                        System.out.println("__________________________________________________");
+                        it = this.listaTrechos.iterator();
+                        while(it.hasNext()){
+                            Trecho trecho2 = (Trecho) it.next();
+                            System.out.println(trecho2.getId()+"------"+trecho2.getStatus());
+                        }
+                        
+                        
+                    }
+    
+    
     
     /**
      * Reserva todos os trechos
@@ -435,14 +497,41 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
      */
     @Override
     public boolean reservando(int ids[]){
-        List trechos = this.trechos();
-        Iterator it = trechos.iterator();
-        for(int i = 0; i < ids.length; i++){
-            while(it.hasNext()){
-                Trecho trecho = (Trecho) it.next();
-                if(trecho.getId() == ids[i]){
-                    trecho.setStatus(1);
+        
+        for(int i = 1; i<=3; i++){
+            
+            if(i != serverId){
+                try {
+                    companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                    System.out.println("ENTROUUUUUUUUUUUU!" + i);
+                    List trechos = companhia.trechosDoServidor();
+                    Iterator it = trechos.iterator();
+                    for(int s = 0; s < ids.length; s++){
+                        System.out.println("ENTROUUUUUUUUUUUU2!" + s);
+                        while(it.hasNext()){
+                            System.out.println("ENTROUUUUUUUUUUUU3!" + s);
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                System.out.println("AQUIIIIIIIII!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                                companhia.trocarStatus(trecho, 1);
+                                //trecho.setStatus(1);
+                            }
+                        }
+                    }
+                } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+                    Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+            else{
+                    Iterator it = this.listaTrechos.iterator();
+                    for(int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                trecho.setStatus(1);
+                            }
+                        }
+                    }
             }
         }
         return true;
@@ -455,14 +544,35 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
      */
     @Override
     public boolean comprar(int ids[]){
-        List trechos = this.trechos();
-        Iterator it = trechos.iterator();
-        for(int i = 0; i < ids.length; i++){
-            while(it.hasNext()){
-                Trecho trecho = (Trecho) it.next();
-                if(trecho.getId() == ids[i]){
-                    trecho.setStatus(2);
+        for(int i = 1; i<=3; i++){
+            if(i != serverId){
+                try {
+                    companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                    List trechos = companhia.trechosDoServidor();
+                    Iterator it = trechos.iterator();
+                    for(int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                companhia.trocarStatus(trecho, 2);
+                                trecho.setStatus(2);
+                            }
+                        }
+                    }
+                } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+                    Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+            else{
+                    Iterator it = this.listaTrechos.iterator();
+                    for(int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                trecho.setStatus(2);
+                            }
+                        }
+                    }
             }
         }
         return true;
@@ -474,18 +584,46 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
      */
     @Override
     public boolean listaDeEspera1(int ids[]){
-        List trechos = this.trechos();
-        Iterator it = trechos.iterator();
-        for(int i = 0; i < ids.length; i++){
-            while(it.hasNext()){
-                Trecho trecho = (Trecho) it.next();
-                if(trecho.getId() == ids[i]){
-                    if(trecho.getId() == 0)
-                    trecho.setStatus(1);
+        for(int i = 1; i<=3; i++){
+            if(i != serverId){
+                try {
+                    companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                    List trechos = companhia.trechosDoServidor();
+                    Iterator it = trechos.iterator();
+                    for(int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            ////////////////////////////////////////////////////////
+                            if(trecho.getId() == ids[s]){
+                                if(trecho.getStatus()== 0){
+                                    companhia.trocarStatus(trecho, 1);
+                                    trecho.setStatus(1);
+                                }
+                                else{
+                                    listaDeEspera[ids[s]] = true;
+                                }
+                            }
+                        }
+                    }
+                } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+                    Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                else{
-                    listaDeEspera[ids[i]] = true;
-                }
+            }
+            else{
+                    Iterator it = this.listaTrechos.iterator();
+                    for(int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                if(trecho.getStatus()== 0){
+                                    trecho.setStatus(1);
+                                } else{
+                                    listaDeEspera[ids[s]] = true;
+                                }
+                            }
+                            
+                        }
+                    }
             }
         }
         return true;
@@ -497,17 +635,81 @@ public class CompanhiaImplementacao extends UnicastRemoteObject implements Compa
      */
     @Override
     public boolean listaDeEspera2(int ids[]){
-        List trechos = this.trechos();
-        Iterator it = trechos.iterator();
-        for(int i = 0; i < ids.length; i++){
-            while(it.hasNext()){
-                Trecho trecho = (Trecho) it.next();
-                if(trecho.getId() == ids[i]){
-                    trecho.setStatus(0);
-                    if(listaDeEspera[ids[i]]){
-                        listaDeEspera[ids[i]] = false;
+        
+        for(int i = 1; i<=3; i++){
+            if(i != serverId){
+                try {
+                    companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                    List trechos = companhia.trechosDoServidor();
+                    Iterator it = trechos.iterator();
+                    for(int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                companhia.trocarStatus(trecho, 0);
+                                trecho.setStatus(0);
+                                if(listaDeEspera[ids[s]]){
+                                    listaDeEspera[ids[s]] = false;
+                                }
+                            }
+                        }
                     }
+                } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+                    Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+            else{
+                    Iterator it = this.listaTrechos.iterator();
+                    for(int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                trecho.setStatus(0);
+                                if(listaDeEspera[ids[s]]){
+                                    listaDeEspera[ids[s]] = false;
+                                }
+                            }
+                        }
+                    }
+            }
+        }
+        return true;
+    }
+    
+    
+    
+    @Override
+    public boolean desistir(int ids[]){
+
+        for(int i = 1; i<=3; i++){
+            if(i != serverId){
+                try {
+                    companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + i);
+                    List trechos = companhia.trechosDoServidor();
+                    Iterator it = trechos.iterator();
+                    for(int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                companhia.trocarStatus(trecho, 0);
+                                trecho.setStatus(0);
+                            }
+                        }
+                    }
+                } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+                    Logger.getLogger(CompanhiaImplementacao.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            else{
+                    Iterator it = this.listaTrechos.iterator();
+                    for(int s = 0; s < ids.length; s++){
+                        while(it.hasNext()){
+                            Trecho trecho = (Trecho) it.next();
+                            if(trecho.getId() == ids[s]){
+                                trecho.setStatus(0);
+                            }
+                        }
+                    }
             }
         }
         return true;
