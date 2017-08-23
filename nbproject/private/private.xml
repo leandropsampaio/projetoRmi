@@ -3,11 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/Network/Servidor.java</file>
-            <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/Controller/CompanhiaImplementacao.java</file>
-            <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/View/ServidorRMI.java</file>
-            <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/View/ClienteRMI.java</file>
-            <file>file:/home/brnrdrosa/Desktop/pblredes/projetoRmi/src/Controller/Companhia.java</file>
+            <file>file:/C:/Users/Micro/Documents/NetBeansProjects/ProjetoRMI/src/Model/Trechos.java</file>
+            <file>file:/C:/Users/Micro/Documents/NetBeansProjects/ProjetoRMI/src/View/ClienteRMI.java</file>
+            <file>file:/C:/Users/Micro/Documents/NetBeansProjects/ProjetoRMI/src/Controller/CompanhiaImplementacao.java</file>
+            <file>file:/C:/Users/Micro/Documents/NetBeansProjects/ProjetoRMI/src/Controller/Companhia.java</file>
+            <file>file:/C:/Users/Micro/Documents/NetBeansProjects/ProjetoRMI/src/Model/Trecho.java</file>
+            <file>file:/C:/Users/Micro/Documents/NetBeansProjects/ProjetoRMI/src/Network/Servidor.java</file>
+            <file>file:/C:/Users/Micro/Documents/NetBeansProjects/ProjetoRMI/src/Network/Cliente.java</file>
+            <file>file:/C:/Users/Micro/Documents/NetBeansProjects/ProjetoRMI/src/View/ServidorRMI.java</file>
         </group>
     </open-files>
 </project-private>
