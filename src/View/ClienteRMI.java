@@ -28,6 +28,8 @@ import Controller.CompanhiaImplementacao;
  */
 public class ClienteRMI extends javax.swing.JFrame {
 
+    private boolean confirmar = false;
+    private boolean cancelar = false;
     private Companhia com;
     private Companhia companhia;
     private CompanhiaImplementacao companhia2;
@@ -47,7 +49,7 @@ public class ClienteRMI extends javax.swing.JFrame {
         buttonConfirmar.setEnabled(false);
         buttonCancelar.setEnabled(false);
         try {
-            companhia  = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
+            companhia = (Companhia) Naming.lookup("127.0.0.1/PassagensAreas" + id);
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -138,6 +140,11 @@ public class ClienteRMI extends javax.swing.JFrame {
         buttonCancelar.setFont(new java.awt.Font("Trajan Pro", 1, 14)); // NOI18N
         buttonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/cancel.png"))); // NOI18N
         buttonCancelar.setText("Cancelar");
+        buttonCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -159,7 +166,7 @@ public class ClienteRMI extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -237,7 +244,17 @@ public class ClienteRMI extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonRemoverActionPerformed
 
     private void buttonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmarActionPerformed
-        comprar(dlm2.toArray());
+        confirmar = true;
+
+        //comprar
+        int ids[] = this.pedirAcesso(dlm2.toArray());
+        try {
+            companhia.comprar(ids);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //LiberaRegCrit
+        this.liberarRegCrit(ids);
 
         //limpar a lista de trechos escolhidos
         dlm.removeAllElements();
@@ -245,14 +262,47 @@ public class ClienteRMI extends javax.swing.JFrame {
         listaTrechos.setModel(dlm);
         listaReservas.setModel(dlm2);
 
+        //desativar buttons
+        buttonConfirmar.setEnabled(false);
+        buttonCancelar.setEnabled(false);
+
+        //zerar cronômetro
+        label.setText("");
+        JOptionPane.showMessageDialog(rootPane, "Compra realizada com sucesso!");
+
         mostrarTrechos();
     }//GEN-LAST:event_buttonConfirmarActionPerformed
 
     private void buttonReservarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonReservarActionPerformed
         reservar(dlm2.toArray());
+        System.out.println("PASSOU");
         //contagem();
 
     }//GEN-LAST:event_buttonReservarActionPerformed
+
+    private void buttonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelarActionPerformed
+        cancelar = true;
+
+        //cancelar
+        int ids[] = this.pedirAcesso(dlm2.toArray());
+        try {
+            companhia.desistir(ids);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //Libera regCrit
+        this.liberarRegCrit(ids);
+
+        //limpar a lista de trechos escolhidos
+        dlm.removeAllElements();
+        dlm2.removeAllElements();
+        listaTrechos.setModel(dlm);
+        listaReservas.setModel(dlm2);
+
+        //desativar buttons
+        buttonConfirmar.setEnabled(false);
+        buttonCancelar.setEnabled(false);
+    }//GEN-LAST:event_buttonCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -330,6 +380,7 @@ public class ClienteRMI extends javax.swing.JFrame {
         listaTrechos.setModel(dlm);
     }
 
+    /*
     private void comprar(Object[] trechos) {
         int ids[];
         boolean compraConcedida = false;
@@ -355,76 +406,81 @@ public class ClienteRMI extends javax.swing.JFrame {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }
-
+    }*/
     private void setIcon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/plane.png")));
     }
-    
-    private void liberarRegCrit(int[] ids){ 
+
+    private void liberarRegCrit(int[] ids) {
         try {
             companhia.liberarAcesso(ids);
         } catch (RemoteException ex) {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private int[] pedirAcesso(Object[] trechos){
+
+    private int[] pedirAcesso(Object[] trechos) {
         int ids[] = new int[trechos.length];
         Object objetoTrecho2;
         boolean regCrit = false;
         //Transforma trechos em vetor de ids
-            for (int i = 0; i < trechos.length; i++) {
-                System.out.println("AQUI:" + i);
-                objetoTrecho2 = trechos[i];
-                String protocolo[] = objetoTrecho2.toString().split("-");
-                ids[i] = Integer.parseInt(protocolo[0]);
-                System.out.println(ids[i] + "////" + trechos[i]);
+        for (int i = 0; i < trechos.length; i++) {
+            System.out.println("AQUI:" + i);
+            objetoTrecho2 = trechos[i];
+            String protocolo[] = objetoTrecho2.toString().split("-");
+            ids[i] = Integer.parseInt(protocolo[0]);
+            System.out.println(ids[i] + "////" + trechos[i]);
+        }
+        //Pede autorização para entrar na região critica
+        while (!regCrit) {
+            try {
+                regCrit = companhia.autorizarTotals(ids);
+            } catch (RemoteException ex) {
+                Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
             }
-            //Pede autorização para entrar na região critica
-            while (!regCrit) {
-                try {
-                    regCrit = companhia.autorizarTotals(ids);
-                } catch (RemoteException ex) {
-                    Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            
-            return ids;   
+        }
+        //System.out.println(ids[0] + "Funcionando");
+        return ids;
     }
 
-    private void reservar(Object[] trechos){
+    private void reservar(Object[] trechos) {
         try {
             int statusDoTrecho = 0;
             int[] ids = pedirAcesso(trechos);
             try {
+                System.out.println("xxxxxxxxxxxxxx");
                 statusDoTrecho = companhia.checarDisp(ids);
+                System.out.println("ZZZZZZZZZZZZZZZ");
             } catch (RemoteException ex) {
                 Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+            System.out.println("Status do trecho " + statusDoTrecho);
             switch (statusDoTrecho) {
-                
-                case 1: //chama função para reservar o trecho
-                    companhia.reservando(ids);
-                    buttonConfirmar.setEnabled(true);
-                    buttonCancelar.setEnabled(true);
-                    contagem();
-                    System.out.println("ss");
+
+                case 0: //chama função para reservar o trecho
+                    boolean reserva = companhia.reservando(ids); //Reserva os trechos
+                    if (reserva == true) {
+                        buttonConfirmar.setEnabled(true); //Compra os trechos
+                        buttonCancelar.setEnabled(true); //Desiste dos trechos
+                        contagem(0, ids);
+                    } else {
+                        JOptionPane.showMessageDialog(rootPane, "Alguns desses trechos não mais estão disponíveis! Tente novamente...");
+                    }
                     break; //Todos os trechos disponíveis
-                    
-                case 2: //chama função para ir pra lista de espera
+
+                case 1: //chama função para ir pra lista de espera
                     buttonConfirmar.setEnabled(false);
                     buttonCancelar.setEnabled(false);
-                    contagem();
+                    contagem(1, ids);
+
+                    JOptionPane.showMessageDialog(rootPane, "Aguarde, você está na lista de espera...");
                     break; //Caso exatamente 1 trecho esteja reservado e o resto disponível
-                    
-                case 3: //nega a requisição
+
+                case 2: //nega a requisição
                     buttonConfirmar.setEnabled(false);
                     buttonCancelar.setEnabled(false);
-                    
+
                     //limpar a lista de trechos escolhidos
-                    dlm.removeAllElements();
                     dlm2.removeAllElements();
                     listaTrechos.setModel(dlm);
                     listaReservas.setModel(dlm2);
@@ -437,17 +493,14 @@ public class ClienteRMI extends javax.swing.JFrame {
             Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void reservado(){
-        
-    }
 
-    public void contagem() {
+    public void contagem(int status, int[] ids) {
 
         new Thread() {
             @Override
             public void run() {
-                int contador = 2; // Valor que inicia o contador
+                int status2 = status;
+                int contador = 20; // Valor que inicia o contador
                 while (true) {
                     try {
                         //Contagem ilimitada
@@ -460,7 +513,59 @@ public class ClienteRMI extends javax.swing.JFrame {
 
                     label.setText(String.valueOf(contador));
 
+                    System.out.println("STATUS: " + status); // variável status não atualiza
+                    System.out.println("STATUS2: " + status2); // variável status não atualiza
+
+                    if (confirmar == true) {
+                        confirmar = false;
+                        label.setText("");
+                        break;
+                    } else if (cancelar == true) {
+                        cancelar = false;
+                        label.setText("");
+                        JOptionPane.showMessageDialog(rootPane, "Compra cancelada com sucesso!");
+                        break;
+                    }
+                    /*
+                    try {
+                        status2 = companhia.checarDisp(ids);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    if (status2 == 0 && passou == 0) {
+                        passou = 1; // Entrar uma única vez
+                        buttonConfirmar.setEnabled(true);
+                        buttonCancelar.setEnabled(true);
+                        JOptionPane.showMessageDialog(rootPane, "Trecho liberado...");
+                    }*/
                     if (contador == 0) {
+                        if (status == 0) {
+                            try {
+                                companhia.desistir(ids); // DANDO ERRO!
+                                buttonConfirmar.setEnabled(false);
+                                buttonCancelar.setEnabled(false);
+                                JOptionPane.showMessageDialog(rootPane, "Tempo encerrado, espero que tenha escolhido bem.");
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        } else if (status == 1) {
+                            try {
+                                if (companhia.checarDisp(ids) == 0) {
+                                    buttonConfirmar.setEnabled(true);
+                                    buttonCancelar.setEnabled(true);
+                                } else {
+                                    //limpar a lista de trechos escolhidos
+
+                                    dlm2.removeAllElements();
+                                    listaTrechos.setModel(dlm);
+                                    listaReservas.setModel(dlm2);
+                                    JOptionPane.showMessageDialog(rootPane, "Alguns desses trechos não mais estão disponíveis! Tente novamente...");
+                                }
+
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(ClienteRMI.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
                         break;
                     }
                 }

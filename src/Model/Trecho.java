@@ -19,6 +19,7 @@ public class Trecho implements Serializable {
 
     public Trecho(int id, String origem, String destino, int companhia, int quantAssentos, int status) {
         this.id = id;
+        this.status= status;
         this.origem = origem;
         this.destino = destino;
         this.companhia = companhia;
